@@ -1,0 +1,66 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: UI Sprite Atlas
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings: []
+    packingSettings:
+      serializedVersion: 2
+      padding: 2
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+    variantMultiplier: 1
+    packables:
+    - {fileID: 102900000, guid: 57d1089384bf88d4fb1472f0b182ca41, type: 3}
+    totalSpriteSurfaceArea: 2187394
+    bindAsDefault: 1
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: 442a1b61bf1a03f40abc6ea08368361a, type: 3}
+  - {fileID: 21300000, guid: f24fbd8462dfe44878445c266005fdce, type: 3}
+  - {fileID: 21300000, guid: 32718fb426b3c4f21b22eb41e187a12f, type: 3}
+  - {fileID: 21300000, guid: 70b4fa159e5e44d53a3df1730945eccf, type: 3}
+  - {fileID: 21300000, guid: 2e21e7750b942446b9b196cc01b48211, type: 3}
+  - {fileID: 21300000, guid: 8db25a57750ddd54f9baf959c8cb4346, type: 3}
+  - {fileID: 21300000, guid: e8e3c9f756a0c4ef6a14084588072a0f, type: 3}
+  - {fileID: 21300000, guid: 349ecb082de14f14d912a116f5e9acb0, type: 3}
+  - {fileID: 21300000, guid: 2a2465a8baddf480d91cea31b8c0cddb, type: 3}
+  - {fileID: 21300000, guid: 993d075a14a886d49a4058095a6ff61a, type: 3}
+  - {fileID: 21300000, guid: 409daf7bc94084ed7a4f0778c9e131a9, type: 3}
+  - {fileID: 21300000, guid: 12cf531ef0326c743817331ca605e373, type: 3}
+  - {fileID: 21300000, guid: d639a84f01a91ff49abf8ac03bd8685c, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - images
+  - Boy_1
+  - Arrow-Up-Icon
+  - Level-List-Icon
+  - Home-Icon
+  - clear_rect
+  - Settings-Icon
+  - White-Circle
+  - Popup-Close-Icon
+  - white_rect
+  - Map-Icon
+  - attackIcon
+  - Building_Icon
+  m_Tag: UI Sprite Atlas
+  m_IsVariant: 0
