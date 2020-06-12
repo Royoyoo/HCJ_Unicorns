@@ -1,18 +1,14 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SpawnedObject : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private GameObject Model;
 
-    // Update is called once per frame
-    void Update()
+    public void SetRandomRoute()
     {
-        
+        var randomRoute = Random.Range(-1, 2);
+        Debug.Log(randomRoute);
+        Model.transform.localPosition += Vector3.right * randomRoute;
     }
 }

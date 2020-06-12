@@ -39,7 +39,7 @@ public class ObjectSpawner : MonoBehaviour
         {
             // чтобы не заспавнить в 0 дистанции
             var distance = spawnDistance * (i + 1);
-            Debug.Log(i + " " + distance);
+            
             // позиция и тангенс на этой дистанции
             // TODO: мб не нужны повороты
 
@@ -48,7 +48,10 @@ public class ObjectSpawner : MonoBehaviour
             var rotation = Quaternion.LookRotation(tangent);
             
             var randomPrefab = Prefabs[Random.Range(0, Prefabs.Length)];
+                  
             var spawnedObject = Instantiate(randomPrefab, position, rotation, this.transform);
+            spawnedObject.SetRandomRoute();
+
         }
     }
 }

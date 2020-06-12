@@ -259,7 +259,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Route: {fileID: 861740161}
-  Model: {fileID: 1364550078}
   ChangeRouteSpeed: 5
 --- !u!1 &497424371
 GameObject:
@@ -293,7 +292,7 @@ MonoBehaviour:
   Route: {fileID: 861740161}
   SpawnCount: 10
   Prefabs:
-  - {fileID: 1109766776}
+  - {fileID: 1486688889}
   - {fileID: 1486688889}
 --- !u!4 &497424373
 Transform:
@@ -929,6 +928,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79cd4710698c4f4795905a72486f4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Model: {fileID: 1328256075}
 --- !u!1 &1328256075
 GameObject:
   m_ObjectHideFlags: 0
@@ -1145,6 +1145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b79cd4710698c4f4795905a72486f4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Model: {fileID: 637992801}
 --- !u!4 &1486688890
 Transform:
   m_ObjectHideFlags: 0
