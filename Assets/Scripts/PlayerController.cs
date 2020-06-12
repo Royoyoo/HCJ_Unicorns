@@ -1,6 +1,5 @@
 ﻿using BansheeGz.BGSpline.Components;
 using BansheeGz.BGSpline.Curve;
-
 using System.Collections;
 using UnityEngine;
 
@@ -17,12 +16,8 @@ public class PlayerController : MonoBehaviour
 {
     public BGCurve Route;
     BGCcTrs trs;
-    BGCcMath math;
 
     public GameObject Model;
-
-    public PitTrigger pitTrigger;
-    public AnimationCurve pitFallCurve;
 
     [Range(0.01f, 10f)]
     public float ChangeRouteSpeed = 5;
@@ -31,12 +26,17 @@ public class PlayerController : MonoBehaviour
     [Range(0.01f, 10f)]
     public float Acceleration = 5;
 
-    LineRoute desiredRoute; 
+    LineRoute desiredRoute;
     Rigidbody body;
+
     BoxCollider boxCollider;
     Vector3 colliderStartPosition;
 
     bool fallIntoPit = false;
+    bool collideWithBall = false;
+
+    private float timeAfterBreak = 0;
+    Transform[] brokenParts;
 
     private void Awake()
     {
@@ -46,12 +46,13 @@ public class PlayerController : MonoBehaviour
 
         trs = Route.GetComponent<BGCcTrs>();
         trs.Speed = 0;
-        math = Route.GetComponent<BGCcMath>();
+
 
         Model.transform.localPosition = Vector3.zero;
-        desiredRoute = LineRoute.Center;     
+        desiredRoute = LineRoute.Center;
     }
 
+   
     private void Update()
     {
         Accelerate();
@@ -61,7 +62,7 @@ public class PlayerController : MonoBehaviour
         {
             desiredRoute = desiredRoute + 1;
             if (desiredRoute > LineRoute.Right)
-                desiredRoute = LineRoute.Right;           
+                desiredRoute = LineRoute.Right;
         }
 
         // налево - наружу круга
@@ -72,8 +73,8 @@ public class PlayerController : MonoBehaviour
             if (desiredRoute < LineRoute.Left)
                 desiredRoute = LineRoute.Left;
         }
-        Move(desiredRoute);
 
+        // test
         if (Input.GetKeyDown(KeyCode.R))
         {
             StopRouting();
@@ -82,6 +83,33 @@ public class PlayerController : MonoBehaviour
         {
             StartRouting();
         }
+
+        Move(desiredRoute);
+
+       // UpdateBreakParts();
+    }
+
+    bool addedColliders;
+    private void UpdateBreakParts()
+    {
+        if (collideWithBall)
+        {
+            timeAfterBreak += Time.deltaTime;
+            if (timeAfterBreak > 0.1f && brokenParts != null && !addedColliders)
+            {
+                foreach (var item in brokenParts)
+                {
+                    item.gameObject.AddComponent<BoxCollider>();
+                }
+                print("addedColliders = " + addedColliders);
+                addedColliders = true;
+            }
+        }
+        else
+        {
+            timeAfterBreak = 0;
+            addedColliders = false;
+        }
     }
 
     private void Accelerate()
@@ -89,17 +117,17 @@ public class PlayerController : MonoBehaviour
         if (trs.Speed < MaxSpeed)
         {
             trs.Speed += Acceleration * Time.deltaTime;
-        }            
+        }
     }
 
     private void StopRouting()
-    {        
+    {
         trs.enabled = false;
-       
+
     }
 
     private void StartRouting()
-    {        
+    {
         trs.enabled = true;
         trs.Speed = 0;
     }
@@ -107,17 +135,17 @@ public class PlayerController : MonoBehaviour
     private void Move(LineRoute desiredRoute)
     {
         var currentX = Model.transform.localPosition.x;
-       
+
 
         var desiredX = (int)desiredRoute * Data.Config.RouteDistance;
-              
+
         var threshold = 0.1f * Data.Config.RouteDistance;
-                     
+
         var moveX = 0f;
 
-        if (currentX < desiredX  )
+        if (currentX < desiredX)
             moveX = ChangeRouteSpeed * Time.deltaTime;
-        if (currentX > desiredX )
+        if (currentX > desiredX)
             moveX = -ChangeRouteSpeed * Time.deltaTime;
 
         var newPositionX = Mathf.Clamp(Model.transform.localPosition.x + moveX, -Data.Config.RouteDistance, Data.Config.RouteDistance);
@@ -132,13 +160,15 @@ public class PlayerController : MonoBehaviour
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
     }
 
+    #region яма
+
     public void FallIntoPit()
     {
         // видимо из-за переключения твердого тела, срабатывает несколько раз этот триггер
         if (fallIntoPit == true)
             return;
 
-        Debug.Log("FallIntoPit");      
+        Debug.Log("FallIntoPit");
 
         fallIntoPit = true;
 
@@ -146,63 +176,116 @@ public class PlayerController : MonoBehaviour
 
         body.isKinematic = false;
         body.useGravity = true;
-        var randomForce = new Vector3(Random.value, Random.value, Random.value) * 10;
+        var randomForce = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value) * 10;
         body.AddForce(randomForce, ForceMode.Force);
-        var randomTorque = new Vector3(Random.value, Random.value, Random.value) * 10;
+        var randomTorque = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value) * 10;
         body.AddTorque(randomTorque, ForceMode.Force);
         //  StartCoroutine(FallIntoPitCor()); 
 
-        StartCoroutine(WaitTimeout(1f, ()=>ResoreFromPit())); 
+        StartCoroutine(WaitTimeout(1f, () => ResoreFromPit()));
     }
+
     public void ResoreFromPit()
     {
         fallIntoPit = false;
 
         // todo
-        var pitSize = 3f;
+        var addDistance = 3f;
 
         Debug.Log("ResoreFromPit");
 
-        var position = math.CalcPositionAndTangentByDistance(trs.Distance + pitSize, out Vector3 tangent);
-        var rotation = Quaternion.LookRotation(tangent);
-        transform.position = position;
-        transform.rotation = rotation;
-
-        trs.Distance += pitSize;
+        trs.Distance += addDistance;
 
         body.velocity = Vector3.zero;
         body.isKinematic = true;
         body.useGravity = false;
 
         StartRouting();
-       // StartCoroutine(WaitTimeout(1f, () => StartRouting())); 
+        // StartCoroutine(WaitTimeout(1f, () => StartRouting())); 
 
     }
 
-    public IEnumerator FallIntoPitCor()
-    {     
-        var duration = 1f;
-        var startTime = Time.time;
-        var startPos = transform.position;
+    #endregion яма
 
-        while (Time.time < startTime + duration)
+    #region шар на цепи
+
+    public void CollideWithBall(Vector3 forceDirection, Vector3 ballPosition)
+    {
+        // видимо из-за переключения твердого тела, срабатывает несколько раз этот триггер
+        if (collideWithBall == true)
+            return;
+
+        Debug.Log("CollideWithBall");
+
+        collideWithBall = true;
+
+        StopRouting();
+
+        Break(ballPosition);
+
+        //body.isKinematic = false;
+        //body.useGravity = false;
+        // body.AddForce(forceDirection * 1f, ForceMode.Impulse);
+
+        StartCoroutine(WaitTimeout(2f, () => ResoreAfterCollideWithBall()));
+    }
+
+
+    public void ResoreAfterCollideWithBall()
+    {
+        Model.SetActive(true);
+        collideWithBall = false;
+
+        // todo
+        var addDistance = 3f;
+
+        Debug.Log("ResoreAfterCollideWithBall");
+
+        trs.Distance += addDistance;
+
+        body.velocity = Vector3.zero;
+        body.isKinematic = true;
+        body.useGravity = false;
+
+        StartRouting();
+        // StartCoroutine(WaitTimeout(1f, () => StartRouting())); 
+
+    }
+
+
+  
+    private void Break(Vector3 ballPosition)
+    {
+        var brokenModel = Instantiate(Model, this.transform);
+        brokenModel.name = Model.name + "_Broken";
+        brokenParts = brokenModel.GetComponentsInChildren<Transform>();
+        foreach (var item in brokenParts)
         {
-            var t = (Time.time - startTime) / duration;
-            this.transform.position = Vector3.Lerp(startPos, startPos + Vector3.down, t)/* + Vector3.forward * 5f * pitFallCurve.Evaluate(t)*/;
-            yield return null;
+            // print("For loop: " + item.name);
+            var collider = item.gameObject.AddComponent<BoxCollider>();
+            //collider.size *= 0.2f;
+            var rb = item.gameObject.AddComponent<Rigidbody>();
+
+            rb.AddForce((Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
+            //rb.AddExplosionForce(10, ballPosition, 100);
+
         }
-    }
+        Destroy(brokenModel, 1f);
+        Model.SetActive(false);
+    }   
+
+    #endregion шар на цепи
 
     public IEnumerator WaitTimeout(float timeout, System.Action action)
-    {        
+    {
         var startTime = Time.time;
-        
+
         while (Time.time < startTime + timeout)
-        {           
+        {
             yield return null;
         }
         action.Invoke();
     }
 
-    
+
 }

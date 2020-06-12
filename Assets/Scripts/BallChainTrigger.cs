@@ -7,21 +7,32 @@ using UnityEngine.Events;
 
 public class BallChainTrigger : MonoBehaviour
 {
-    public UnityEvent CollideWithPlayer;
+  //  public UnityEvent CollideWithPlayer;
 
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter" + other);
+        Debug.Log("OnTriggerEnter " + other);
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            CollideWithPlayer?.Invoke();
+            var player = other.gameObject.GetComponent<PlayerController>();
+            var forceDirection = player.transform.position - this.transform.position;            
+           // player.CollideWithBall(forceDirection);
+            //   CollideWithPlayer?.Invoke();
         }
     }
 
-    //public void OnCollisionStay(Collision collision)
-    //{
-    //    Debug.Log("OnTriggerEnter" + collision);
+    public void OnCollisionEnter(Collision collision)
+    {
+        
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            Debug.Log("OnCollisionEnter " + collision);
+            var player = collision.gameObject.GetComponent<PlayerController>();
+            var forceDirection = player.transform.position - this.transform.position;
+            player.CollideWithBall(forceDirection, transform.position);
+          //  CollideWithPlayer?.Invoke();
+        }
 
-    //}
+    }
 }
