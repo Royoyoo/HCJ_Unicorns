@@ -1,4 +1,7 @@
-﻿using BansheeGz.BGSpline.Curve;
+﻿using BansheeGz.BGSpline.Components;
+using BansheeGz.BGSpline.Curve;
+
+using System.Collections;
 using UnityEngine;
 
 public enum LineRoute
@@ -8,24 +11,51 @@ public enum LineRoute
     Right = 1,
 }
 
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(BoxCollider))]
 public class PlayerController : MonoBehaviour
 {
     public BGCurve Route;
+    BGCcTrs trs;
+    BGCcMath math;
+
     public GameObject Model;
 
-    [Range(0.01f , 10f)]
-    public float ChangeRouteSpeed = 5;
+    public PitTrigger pitTrigger;
+    public AnimationCurve pitFallCurve;
 
-    LineRoute desiredRoute;   
+    [Range(0.01f, 10f)]
+    public float ChangeRouteSpeed = 5;
+    [Range(0.01f, 10f)]
+    public float MaxSpeed = 5;
+    [Range(0.01f, 10f)]
+    public float Acceleration = 5;
+
+    LineRoute desiredRoute; 
+    Rigidbody body;
+    BoxCollider boxCollider;
+    Vector3 colliderStartPosition;
+
+    bool fallIntoPit = false;
 
     private void Awake()
     {
+        body = GetComponent<Rigidbody>();
+        boxCollider = GetComponent<BoxCollider>();
+        colliderStartPosition = boxCollider.center;
+
+        trs = Route.GetComponent<BGCcTrs>();
+        trs.Speed = 0;
+        math = Route.GetComponent<BGCcMath>();
+
         Model.transform.localPosition = Vector3.zero;
         desiredRoute = LineRoute.Center;     
     }
 
     private void Update()
-    {   
+    {
+        Accelerate();
+
         // направо - внутрь круга
         if (Input.GetKeyDown(KeyCode.D))
         {
@@ -43,11 +73,41 @@ public class PlayerController : MonoBehaviour
                 desiredRoute = LineRoute.Left;
         }
         Move(desiredRoute);
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            StopRouting();
+        }
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            StartRouting();
+        }
+    }
+
+    private void Accelerate()
+    {
+        if (trs.Speed < MaxSpeed)
+        {
+            trs.Speed += Acceleration * Time.deltaTime;
+        }            
+    }
+
+    private void StopRouting()
+    {        
+        trs.enabled = false;
+       
+    }
+
+    private void StartRouting()
+    {        
+        trs.enabled = true;
+        trs.Speed = 0;
     }
 
     private void Move(LineRoute desiredRoute)
     {
         var currentX = Model.transform.localPosition.x;
+       
 
         var desiredX = (int)desiredRoute * Data.Config.RouteDistance;
               
@@ -69,5 +129,80 @@ public class PlayerController : MonoBehaviour
         }
 
         Model.transform.localPosition = new Vector3(newPositionX, Model.transform.localPosition.y, Model.transform.localPosition.z);
+        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
     }
+
+    public void FallIntoPit()
+    {
+        // видимо из-за переключения твердого тела, срабатывает несколько раз этот триггер
+        if (fallIntoPit == true)
+            return;
+
+        Debug.Log("FallIntoPit");      
+
+        fallIntoPit = true;
+
+        StopRouting();
+
+        body.isKinematic = false;
+        body.useGravity = true;
+        var randomForce = new Vector3(Random.value, Random.value, Random.value) * 10;
+        body.AddForce(randomForce, ForceMode.Force);
+        var randomTorque = new Vector3(Random.value, Random.value, Random.value) * 10;
+        body.AddTorque(randomTorque, ForceMode.Force);
+        //  StartCoroutine(FallIntoPitCor()); 
+
+        StartCoroutine(WaitTimeout(1f, ()=>ResoreFromPit())); 
+    }
+    public void ResoreFromPit()
+    {
+        fallIntoPit = false;
+
+        // todo
+        var pitSize = 3f;
+
+        Debug.Log("ResoreFromPit");
+
+        var position = math.CalcPositionAndTangentByDistance(trs.Distance + pitSize, out Vector3 tangent);
+        var rotation = Quaternion.LookRotation(tangent);
+        transform.position = position;
+        transform.rotation = rotation;
+
+        trs.Distance += pitSize;
+
+        body.velocity = Vector3.zero;
+        body.isKinematic = true;
+        body.useGravity = false;
+
+        StartRouting();
+       // StartCoroutine(WaitTimeout(1f, () => StartRouting())); 
+
+    }
+
+    public IEnumerator FallIntoPitCor()
+    {     
+        var duration = 1f;
+        var startTime = Time.time;
+        var startPos = transform.position;
+
+        while (Time.time < startTime + duration)
+        {
+            var t = (Time.time - startTime) / duration;
+            this.transform.position = Vector3.Lerp(startPos, startPos + Vector3.down, t)/* + Vector3.forward * 5f * pitFallCurve.Evaluate(t)*/;
+            yield return null;
+        }
+    }
+
+    public IEnumerator WaitTimeout(float timeout, System.Action action)
+    {        
+        var startTime = Time.time;
+        
+        while (Time.time < startTime + timeout)
+        {           
+            yield return null;
+        }
+        action.Invoke();
+    }
+
+    
 }

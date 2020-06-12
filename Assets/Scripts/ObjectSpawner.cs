@@ -45,7 +45,7 @@ public class ObjectSpawner : MonoBehaviour
             // позиция и тангенс на этой дистанции
             // TODO: мб не нужны повороты
 
-            // var positionAtOneMeter = math.CalcByDistance(BGCurveBaseMath.Field.Position, distance);
+            // var position = math.CalcByDistance(BGCurveBaseMath.Field.Position, distance);
             var position = math.CalcPositionAndTangentByDistance(distance, out Vector3 tangent);
             var rotation = Quaternion.LookRotation(tangent);
 
