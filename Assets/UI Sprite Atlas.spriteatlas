@@ -31,11 +31,10 @@ SpriteAtlas:
     variantMultiplier: 1
     packables:
     - {fileID: 102900000, guid: 57d1089384bf88d4fb1472f0b182ca41, type: 3}
-    totalSpriteSurfaceArea: 2187394
+    totalSpriteSurfaceArea: 1725250
     bindAsDefault: 1
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: 442a1b61bf1a03f40abc6ea08368361a, type: 3}
   - {fileID: 21300000, guid: f24fbd8462dfe44878445c266005fdce, type: 3}
   - {fileID: 21300000, guid: 32718fb426b3c4f21b22eb41e187a12f, type: 3}
   - {fileID: 21300000, guid: 70b4fa159e5e44d53a3df1730945eccf, type: 3}
@@ -46,10 +45,7 @@ SpriteAtlas:
   - {fileID: 21300000, guid: 2a2465a8baddf480d91cea31b8c0cddb, type: 3}
   - {fileID: 21300000, guid: 993d075a14a886d49a4058095a6ff61a, type: 3}
   - {fileID: 21300000, guid: 409daf7bc94084ed7a4f0778c9e131a9, type: 3}
-  - {fileID: 21300000, guid: 12cf531ef0326c743817331ca605e373, type: 3}
-  - {fileID: 21300000, guid: d639a84f01a91ff49abf8ac03bd8685c, type: 3}
   m_PackedSpriteNamesToIndex:
-  - images
   - Boy_1
   - Arrow-Up-Icon
   - Level-List-Icon
@@ -60,7 +56,5 @@ SpriteAtlas:
   - Popup-Close-Icon
   - white_rect
   - Map-Icon
-  - attackIcon
-  - Building_Icon
   m_Tag: UI Sprite Atlas
   m_IsVariant: 0
