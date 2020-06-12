@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     public GameObject Model;
 
     [Range(0.01f , 10f)]
-    public float ChangeRouteSpeed = 1;
+    public float ChangeRouteSpeed = 5;
 
     int desiredRoute;
 
