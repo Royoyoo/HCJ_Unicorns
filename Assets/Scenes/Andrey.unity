@@ -259,7 +259,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Route: {fileID: 861740161}
-  Model: {fileID: 0}
+  Model: {fileID: 1364550078}
   ChangeRouteSpeed: 5
 --- !u!1 &497424371
 GameObject:

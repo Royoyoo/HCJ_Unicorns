@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 046bb0bc337380c4fbfe4c1a0686cc5f, type: 3}
   m_Name: DefaultConfig
   m_EditorClassIdentifier: 
-  RouteDistance: 5
+  RouteDistance: 2
