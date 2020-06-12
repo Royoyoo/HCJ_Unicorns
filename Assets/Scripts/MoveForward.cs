@@ -7,9 +7,10 @@ using TMPro;
 public class MoveForward : MonoBehaviour
 {
     public float Speed;
-
-    void Update()
+    public Rigidbody thisRB;
+    
+    void FixedUpdate()
     {
-        this.transform.position += Vector3.forward * Speed * Time.deltaTime;
+        thisRB.position += Vector3.forward * Speed * Time.fixedDeltaTime;
     }
 }
