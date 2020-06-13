@@ -1,5 +1,6 @@
 ﻿using BansheeGz.BGSpline.Components;
 using BansheeGz.BGSpline.Curve;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -53,9 +54,11 @@ public class PlayerController : MonoBehaviour
     private float startRotationY;
     private float startRotationZ;
 
-    private float CurrentSpeed => trs.Speed;
+    public float CurrentSpeed => trs.Speed;
     private Quaternion ModelRotation => Model.transform.localRotation;
     private Vector3 ModelPosition => Model.transform.localPosition;
+
+    public bool OnRamp = false;
 
     private void Awake()
     {
@@ -72,7 +75,6 @@ public class PlayerController : MonoBehaviour
         startRotationY = Model.transform.localRotation.eulerAngles.y;
         startRotationZ = Model.transform.localRotation.eulerAngles.z;
     }
-
    
     private void FixedUpdate()
     {
@@ -84,24 +86,38 @@ public class PlayerController : MonoBehaviour
         var currentZ = Model.transform.localPosition.z;
         var newPositionZ = currentZ + moveZ;
         newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
-        Model.transform.localPosition = new Vector3(0f, 0f, newPositionZ);
+        Model.transform.localPosition = new Vector3(0f, Model.transform.localPosition.y, newPositionZ);
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
         
         ApplyRotation(inputMove);
 
+        CheckRamp();
+
         // test
-        if (Input.GetKeyDown(KeyCode.R))
+      /*  if (Input.GetKeyDown(KeyCode.R))
         {
             StopRouting();
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
             StartRouting();
-        }
+        }*/
 
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
+    }
+
+    private void CheckRamp()
+    {
+        if(OnRamp == false && Model.transform.position.y > 0)
+        {
+            Model.transform.position -= Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime; 
+            if(Model.transform.position.y < 0f)
+            {                
+                Model.transform.position = new Vector3(0f, 0, Model.transform.localPosition.z);
+            }
+        }
     }
 
     private void ApplyRotation(float inputMove)
@@ -253,7 +269,7 @@ public class PlayerController : MonoBehaviour
             //collider.size *= 0.2f;
             var rb = item.gameObject.AddComponent<Rigidbody>();
 
-            rb.AddForce((Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
+            rb.AddForce((UnityEngine.Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
             //rb.AddExplosionForce(10, ballPosition, 100);
 
         }
