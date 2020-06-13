@@ -64,23 +64,16 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         Accelerate();
+        
+        var moveX = 0f;
+        var inputMove = Input.GetAxis("Horizontal");                        
+        moveX = inputMove * ChangeRouteSpeed * Time.deltaTime;
 
-        // направо 
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            desiredRoute = desiredRoute + 1;
-            if (desiredRoute > LineRoute._4)
-                desiredRoute = LineRoute._4;
-        }
-
-        // налево 
-        if (Input.GetKeyDown(KeyCode.A))
-        {
-            desiredRoute = desiredRoute - 1;
-
-            if (desiredRoute < LineRoute._1)
-                desiredRoute = LineRoute._1;
-        }
+        var currentX = Model.transform.localPosition.x;
+        var newPositionX = currentX + moveX;        
+        newPositionX = Mathf.Clamp(newPositionX, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));        
+        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
+        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
 
         // test
         if (Input.GetKeyDown(KeyCode.R))
@@ -91,8 +84,6 @@ public class PlayerController : MonoBehaviour
         {
             StartRouting();
         }
-
-        Move(desiredRoute);
 
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
@@ -117,41 +108,7 @@ public class PlayerController : MonoBehaviour
     {
         trs.enabled = true;
         trs.Speed = 0;
-    }
-
-    private void Move(LineRoute desiredRoute)
-    {
-        var currentX = Model.transform.localPosition.x;
-
-
-        var desiredX = DefineRouteX(desiredRoute);// (int)desiredRoute * Data.Config.RouteDistance;
-
-        var threshold = 0.1f;
-
-        var moveX = 0f;
-
-        if (currentX < desiredX)
-            moveX = ChangeRouteSpeed * Time.deltaTime;
-        if (currentX > desiredX)
-            moveX = -ChangeRouteSpeed * Time.deltaTime;
-
-        var newPositionX = ClampRouteX(desiredRoute, threshold, Model.transform.localPosition.x + moveX);
-
-        //Model.transform.localPosition = new Vector3(newPositionX, Model.transform.localPosition.y, Model.transform.localPosition.z);
-        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
-        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
-    }
-
-    private float ClampRouteX(LineRoute desiredRoute, float threshold, float newPositionX)
-    {
-        var desiredX = DefineRouteX(desiredRoute);
-        if (newPositionX > desiredX - threshold && newPositionX < desiredX + threshold)
-        {
-            newPositionX = DefineRouteX(desiredRoute);
-        }
-
-        return newPositionX;
-    }
+    }   
 
     #region яма
 
@@ -301,3 +258,78 @@ public class PlayerController : MonoBehaviour
         }
     }
 }
+
+#region Движение по дорожкам
+
+/*
+ private void Update()
+    {
+        Accelerate();        
+      
+        // направо 
+        if (Input.GetKey(KeyCode.D))
+        { 
+            desiredRoute = desiredRoute + 1;
+            if (desiredRoute > LineRoute._4)
+                desiredRoute = LineRoute._4;
+        }
+
+        // налево 
+        if (Input.GetKey(KeyCode.A))
+        {           
+            desiredRoute = desiredRoute - 1;
+
+            if (desiredRoute < LineRoute._1)
+                desiredRoute = LineRoute._1;
+        }
+
+        var currentX = Model.transform.localPosition.x;
+        var newPositionX = currentX + moveX;        
+        newPositionX = Mathf.Clamp(newPositionX, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));        
+        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
+        
+        Move(desiredRoute);
+
+        leftLeg.speed = CurrentSpeed;
+        rightLeg.speed = CurrentSpeed;       
+    }   
+
+
+     private void Move(LineRoute desiredRoute)
+    {
+        var currentX = Model.transform.localPosition.x;
+
+        var desiredX = DefineRouteX(desiredRoute);// (int)desiredRoute * Data.Config.RouteDistance;
+
+        var threshold = 0.1f;
+
+        var moveX = 0f;
+
+        if (currentX < desiredX)
+            moveX = ChangeRouteSpeed * Time.deltaTime;
+        if (currentX > desiredX)
+            moveX = -ChangeRouteSpeed * Time.deltaTime;
+
+        var newPositionX = ClampRouteX(desiredRoute, threshold, Model.transform.localPosition.x + moveX);
+
+        //Model.transform.localPosition = new Vector3(newPositionX, Model.transform.localPosition.y, Model.transform.localPosition.z);
+        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
+        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
+    }
+
+    private float ClampRouteX(LineRoute desiredRoute, float threshold, float newPositionX)
+    {
+        var desiredX = DefineRouteX(desiredRoute);
+        if (newPositionX > desiredX - threshold && newPositionX < desiredX + threshold)
+        {
+            newPositionX = DefineRouteX(desiredRoute);
+        }
+
+        return newPositionX;
+    }
+
+ */
+
+#endregion
+
+
