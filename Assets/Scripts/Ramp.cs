@@ -2,11 +2,13 @@
 
 public class Ramp : MonoBehaviour
 {  
-    private BoxCollider collider;
+    public BoxCollider collider;
     PlayerController player;
 
+
     public Vector3 ColliderCenter => transform.TransformPoint(collider.center);
-        
+    public Vector3 ColliderSize => transform.TransformPoint(collider.bounds.size);
+
     void Awake()
     {
         collider = GetComponent<BoxCollider>();     

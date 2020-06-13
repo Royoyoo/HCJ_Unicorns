@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     BGCcTrs trs;
 
     public GameObject Model;
+    public Transform WorkerPoint;
 
     [Range(0.01f, 10f)]
     public float ChangeRouteSpeed = 5;
@@ -77,7 +78,7 @@ public class PlayerController : MonoBehaviour
         trs = Route.GetComponent<BGCcTrs>();
         trs.Speed = 0;
         
-        Model.transform.localPosition = Vector3.zero;
+        //Model.transform.localPosition = Vector3.zero;
         desiredRoute = startRoute;
 
         startRotationX = ModelLocalRotation.eulerAngles.x;
@@ -86,19 +87,29 @@ public class PlayerController : MonoBehaviour
 
         rampType = UpDownType.None;
         CanChangeRoute = true;
+        Ramp = null;
     }
 
     private void FixedUpdate()
     {
         Accelerate();
              
-        var inputMove = Input.GetAxis("Horizontal"); 
-        var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
-       
+        var inputMove = Input.GetAxis("Horizontal");
+        // скидываем с рампы, если середина вышла за край
+        var force = ForceFromRamp();
+        //print(force);
+        if (!Mathf.Approximately(force, 0f))
+        {
+            print(force);
+            inputMove = force * 0.5f;
+        }
+
+        var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;      
+
         var currentZ = Model.transform.localPosition.z;
         var newPositionZ = currentZ + moveZ;
         newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
-        var newPosition = new Vector3(0f, Model.transform.localPosition.y, newPositionZ);
+        var newPosition = new Vector3(ModelLocalPosition.x, ModelLocalPosition.y, newPositionZ);
 
         var oldPosition = Model.transform.localPosition;
         if (CanApplyNewPosition(newPosition, oldPosition))
@@ -150,15 +161,37 @@ public class PlayerController : MonoBehaviour
                     return true;
 
                 return false;
-            }
-            else
-            {
-                // проверяем, что свалились с рампы
-            }
-             
+            }  
         }
         return true;
     }
+
+    private float ForceFromRamp()
+    {
+        if (Ramp != null && ModelLocalPosition.y > 1f)
+        {          
+            //var rect = new Rect(new Vector2(Ramp.ColliderCenter.x, , Ramp.ColliderSize);
+            var contains = Ramp.collider.bounds.Contains(WorkerPoint.position);
+            print(contains);
+            if(!contains)
+            {    
+                var rightPoint = WorkerPoint.position + Vector3.forward;
+                var leftPoint = WorkerPoint.position + Vector3.back;
+
+                var colliderCenter =  Ramp.ColliderCenter;
+                var rightPointDistance = Vector3.Distance(rightPoint, colliderCenter);
+                var leftPointDistance = Vector3.Distance(leftPoint, colliderCenter);
+                // если права точка ближе, к рампе, значит рампа справа и нужно двигать влево
+                if (rightPointDistance < leftPointDistance)
+                    return -1;
+                else
+                    return 1;
+            }
+            return 0;           
+        }
+        return 0;
+    }  
+    
 
     private void CheckRamp()
     {
@@ -386,6 +419,23 @@ public class PlayerController : MonoBehaviour
             default:
                 return 0;               
         }
+    }
+
+    private void OnDrawGizmos()
+    {
+        if (WorkerPoint == null)
+            return;
+
+        Gizmos.color = Color.red;
+        Gizmos.DrawSphere(WorkerPoint.position, 0.3f);
+
+        var rightPoint = WorkerPoint.position + Vector3.forward;
+        var leftPoint = WorkerPoint.position + Vector3.back;
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawSphere(rightPoint, 0.1f);
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(leftPoint, 0.1f);
     }
 }
 
