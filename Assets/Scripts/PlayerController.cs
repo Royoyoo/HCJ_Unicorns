@@ -25,10 +25,15 @@ public class PlayerController : MonoBehaviour
 
     [Range(0.01f, 10f)]
     public float ChangeRouteSpeed = 5;
-    [Range(0.01f, 10f)]
-    public float MaxSpeed = 5;
+    [Range(0.01f, 100f)]
+    public float MaxSpeed = 10;
     [Range(0.01f, 10f)]
     public float Acceleration = 5;
+
+    [Range(5f, 60f)]
+    public int MaxRotate = 30;
+    [Range(0.01f, 10f)]
+    public float RotateSpeed = 2;
 
     public Rocking leftLeg;
     public Rocking rightLeg;
@@ -47,8 +52,13 @@ public class PlayerController : MonoBehaviour
     private float timeAfterBreak = 0;
     Transform[] brokenParts;
 
+    private float startRotationY;
+    private float startRotationZ;
+
     private float CurrentSpeed => trs.Speed;
-      
+    private Quaternion ModelRotation => Model.transform.localRotation;
+    private Vector3 ModelPosition => Model.transform.localPosition;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -59,22 +69,26 @@ public class PlayerController : MonoBehaviour
         trs.Speed = 0;
         
         Model.transform.localPosition = Vector3.zero;
-        desiredRoute = startRoute;       
+        desiredRoute = startRoute;
+
+        startRotationY = Model.transform.localRotation.eulerAngles.y;
+        startRotationZ = Model.transform.localRotation.eulerAngles.z;
     }
 
     private void FixedUpdate()
     {
         Accelerate();
-        
-        var moveZ = 0f;
-        var inputMove = Input.GetAxis("Horizontal");                        
-        moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
-
+             
+        var inputMove = Input.GetAxis("Horizontal");
+        var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
+       
         var currentZ = Model.transform.localPosition.z;
-        var newPositionZ = currentZ + moveZ;        
-        newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));        
+        var newPositionZ = currentZ + moveZ;
+        newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
         Model.transform.localPosition = new Vector3(0f, 0f, newPositionZ);
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
+        
+        ApplyRotation(inputMove);
 
         // test
         if (Input.GetKeyDown(KeyCode.R))
@@ -89,7 +103,30 @@ public class PlayerController : MonoBehaviour
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
-    }   
+    }
+
+    private void ApplyRotation(float inputMove)
+    {
+        var koefRotaitonZ = 0.5f;
+
+        var desireRotateY = startRotationY + inputMove * MaxRotate;
+        var desireRotateZ = startRotationZ + inputMove * MaxRotate * koefRotaitonZ;
+
+        var currentRotationY = ModelRotation.eulerAngles.y;
+        var rotationY = currentRotationY;
+        if (currentRotationY != desireRotateY)
+        {
+            rotationY = Mathf.MoveTowardsAngle(ModelRotation.eulerAngles.y, desireRotateY, RotateSpeed);
+        }
+        var currentRotationZ = ModelRotation.eulerAngles.z;
+        var rotationZ = currentRotationZ;
+        if (currentRotationZ != desireRotateZ)
+        {
+            rotationZ = Mathf.MoveTowardsAngle(ModelRotation.eulerAngles.z, desireRotateZ, RotateSpeed * koefRotaitonZ);
+        }
+
+        Model.transform.localRotation = Quaternion.Euler(ModelRotation.eulerAngles.x, rotationY, rotationZ);
+    }
 
     private void Accelerate()
     {
