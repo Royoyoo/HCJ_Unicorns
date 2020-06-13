@@ -1,8 +1,10 @@
-﻿using BansheeGz.BGSpline.Components;
+﻿using System;
+using BansheeGz.BGSpline.Components;
 using BansheeGz.BGSpline.Curve;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 
 public enum LineRoute
 {
@@ -60,7 +62,6 @@ public class PlayerController : MonoBehaviour
         desiredRoute = startRoute;       
     }
 
-   
     private void FixedUpdate()
     {
         Accelerate();
@@ -95,6 +96,11 @@ public class PlayerController : MonoBehaviour
         if (trs.Speed < MaxSpeed)
         {
             trs.Speed += Acceleration * Time.fixedDeltaTime;
+        }
+
+        if (Acceleration < 0)
+        {
+            trs.Speed = Mathf.Max(0f, trs.Speed + Acceleration * Time.fixedDeltaTime);
         }
     }
 

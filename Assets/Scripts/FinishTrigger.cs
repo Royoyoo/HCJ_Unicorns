@@ -6,14 +6,11 @@ using TMPro;
 
 public class FinishTrigger : MonoBehaviour
 {
-    public Animation cameraAnim;
-    
     void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             other.GetComponent<Collector>().BuildWithMats();
-            cameraAnim.Play();
         }
     }
 }

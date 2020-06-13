@@ -7,5 +7,6 @@ using UnityEngine.Serialization;
 [CreateAssetMenu(menuName = "SOs/Player", fileName = "Player")]
 public class Player : ScriptableObject
 {
-    public float coins;
+    public int matCount;
+    public int matsInBuilding;
 }
