@@ -29,7 +29,7 @@ public class UpDownTrigger : MonoBehaviour
            // Debug.Log("OnTriggerStay with Player" + other);
             var direction = Type == UpDownType.Up ? Vector3.up : Vector3.down;
             var value = direction *  player.CurrentSpeed * Time.deltaTime;
-            //player.Ramp(value); 
+            player.Ramp(value); 
         }
     }
 }

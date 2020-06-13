@@ -59,8 +59,8 @@ public class PlayerController : MonoBehaviour
     public bool OnRamp;
 
     public float CurrentSpeed => trs.Speed;
-    private Quaternion ModelRotation => Model.transform.localRotation;
-    private Vector3 ModelPosition
+    private Quaternion ModelLocalRotation => Model.transform.localRotation;
+    private Vector3 ModelLocalPosition
     {
         get
         {
@@ -86,6 +86,8 @@ public class PlayerController : MonoBehaviour
 
         startRotationY = Model.transform.localRotation.eulerAngles.y;
         startRotationZ = Model.transform.localRotation.eulerAngles.z;
+
+
     }
 
     private void FixedUpdate()
@@ -128,9 +130,9 @@ public class PlayerController : MonoBehaviour
             var downForce = Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime;
             Model.transform.position -= downForce;
             //print(downForce);
-            if (ModelPosition.y < 0f)
+            if (ModelLocalPosition.y < 0f)
             {
-                ModelPosition = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
+                ModelLocalPosition = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
             }
         }
     }
@@ -142,20 +144,20 @@ public class PlayerController : MonoBehaviour
         var desireRotateY = startRotationY + inputMove * MaxRotate;
         var desireRotateZ = startRotationZ + inputMove * MaxRotate * koefRotaitonZ;
 
-        var currentRotationY = ModelRotation.eulerAngles.y;
+        var currentRotationY = ModelLocalRotation.eulerAngles.y;
         var rotationY = currentRotationY;
         if (currentRotationY != desireRotateY)
         {
-            rotationY = Mathf.MoveTowardsAngle(ModelRotation.eulerAngles.y, desireRotateY, RotateSpeed);
+            rotationY = Mathf.MoveTowardsAngle(ModelLocalRotation.eulerAngles.y, desireRotateY, RotateSpeed);
         }
-        var currentRotationZ = ModelRotation.eulerAngles.z;
+        var currentRotationZ = ModelLocalRotation.eulerAngles.z;
         var rotationZ = currentRotationZ;
         if (currentRotationZ != desireRotateZ)
         {
-            rotationZ = Mathf.MoveTowardsAngle(ModelRotation.eulerAngles.z, desireRotateZ, RotateSpeed * koefRotaitonZ);
+            rotationZ = Mathf.MoveTowardsAngle(ModelLocalRotation.eulerAngles.z, desireRotateZ, RotateSpeed * koefRotaitonZ);
         }
 
-        Model.transform.localRotation = Quaternion.Euler(ModelRotation.eulerAngles.x, rotationY, rotationZ);
+        Model.transform.localRotation = Quaternion.Euler(ModelLocalRotation.eulerAngles.x, rotationY, rotationZ);
     }
 
     private void Accelerate()
@@ -199,9 +201,9 @@ public class PlayerController : MonoBehaviour
 
         body.isKinematic = false;
         body.useGravity = true;
-        var randomForce = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value) * 10;
+        var randomForce = new Vector3(Random.value, Random.value, Random.value) * 10;
         body.AddForce(randomForce, ForceMode.Force);
-        var randomTorque = new Vector3(UnityEngine.Random.value, UnityEngine.Random.value, UnityEngine.Random.value) * 10;
+        var randomTorque = new Vector3(Random.value, Random.value, Random.value) * 10;
         body.AddTorque(randomTorque, ForceMode.Force);
         //  StartCoroutine(FallIntoPitCor()); 
 
@@ -309,7 +311,7 @@ public class PlayerController : MonoBehaviour
 
     public void Ramp(Vector3 value)
     {
-        ModelPosition += value;
+        ModelLocalPosition += value;
     }
 
     public static float DefineRouteX(LineRoute route)
