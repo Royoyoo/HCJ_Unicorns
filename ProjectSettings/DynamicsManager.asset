@@ -28,7 +28,7 @@ PhysicsManager:
   m_WorldBounds:
     m_Center: {x: 0, y: 0, z: 0}
     m_Extent: {x: 350, y: 350, z: 50}
-  m_WorldSubdivisions: 8
+  m_WorldSubdivisions: 16
   m_FrictionType: 0
   m_EnableEnhancedDeterminism: 0
   m_EnableUnifiedHeightmaps: 1

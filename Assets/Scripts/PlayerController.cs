@@ -1,7 +1,6 @@
 ﻿using System;
 using BansheeGz.BGSpline.Components;
 using BansheeGz.BGSpline.Curve;
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -16,17 +15,11 @@ public enum LineRoute
 }
 
 [RequireComponent(typeof(Rigidbody))]
-// [RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(BoxCollider))]
 public class PlayerController : MonoBehaviour
 {
     public BGCurve Route;
-    public BGCcMath math;
-
-    // BGCcTrs trs;
-
-    public Rigidbody thisRB;
-    public float forceMult = 1f;
-    public float currentSpeed = 0f;
+    BGCcTrs trs;
 
     public GameObject Model;
 
@@ -50,7 +43,7 @@ public class PlayerController : MonoBehaviour
     LineRoute desiredRoute;
     Rigidbody body;
 
-    CapsuleCollider boxCollider;
+    BoxCollider boxCollider;
     Vector3 colliderStartPosition;
 
     bool fallIntoPit = false;
@@ -62,24 +55,20 @@ public class PlayerController : MonoBehaviour
     private float startRotationY;
     private float startRotationZ;
 
-    public float CurrentSpeed => currentSpeed;
+    public bool OnRamp;
+
+    public float CurrentSpeed => trs.Speed;
     private Quaternion ModelRotation => Model.transform.localRotation;
     private Vector3 ModelPosition => Model.transform.localPosition;
 
-    public bool OnRamp = false;
-    private bool isMoving;
-    float curveDistance = 0f;
-    
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
-        boxCollider = GetComponent<CapsuleCollider>();
+        boxCollider = GetComponent<BoxCollider>();
         colliderStartPosition = boxCollider.center;
 
-        isMoving = true;
-        
-        // trs = Route.GetComponent<BGCcTrs>();
-        // trs.Speed = 0;
+        trs = Route.GetComponent<BGCcTrs>();
+        trs.Speed = 0;
         
         Model.transform.localPosition = Vector3.zero;
         desiredRoute = startRoute;
@@ -87,62 +76,35 @@ public class PlayerController : MonoBehaviour
         startRotationY = Model.transform.localRotation.eulerAngles.y;
         startRotationZ = Model.transform.localRotation.eulerAngles.z;
     }
-   
+
     private void FixedUpdate()
     {
-        if (!isMoving)
-            return;
-        
         Accelerate();
              
         var inputMove = Input.GetAxis("Horizontal");
         var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
        
-        var currentZ = Model.transform.localPosition.x;
+        var currentZ = Model.transform.localPosition.z;
         var newPositionZ = currentZ + moveZ;
         newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
-        Model.transform.localPosition = new Vector3(newPositionZ, 0f, 0f);
+        Model.transform.localPosition = new Vector3(0f, 0f, newPositionZ);
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
         
-        //Calculate curve tangent
-        var curvePos = math.CalcPositionByClosestPoint(this.transform.position, out curveDistance);
-        var curveTangent = math.CalcTangentByDistance(curveDistance);
-        
-        // Debug.Log($"{curveDistance}, {curvePos}, {curveTangent}");
-        transform.position = curvePos;
-        transform.rotation = Quaternion.LookRotation(curveTangent);
-        thisRB.AddForce(transform.forward * currentSpeed * forceMult * Time.fixedDeltaTime, ForceMode.Acceleration);
-        // thisRB.AddForce(transform.up * 0.5f * currentSpeed * forceMult * Time.fixedDeltaTime, ForceMode.Acceleration);
-
         ApplyRotation(inputMove);
 
-        CheckRamp();
-
         // test
-      /*  if (Input.GetKeyDown(KeyCode.R))
+        if (Input.GetKeyDown(KeyCode.R))
         {
             StopRouting();
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
             StartRouting();
-        }*/
+        }
 
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
-    }
-
-    private void CheckRamp()
-    {
-        if(OnRamp == false && Model.transform.position.y > 0)
-        {
-            Model.transform.position -= Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime; 
-            if(Model.transform.position.y < 0f)
-            {                
-                Model.transform.position = new Vector3(0f, 0, Model.transform.localPosition.z);
-            }
-        }
     }
 
     private void ApplyRotation(float inputMove)
@@ -170,28 +132,27 @@ public class PlayerController : MonoBehaviour
 
     private void Accelerate()
     {
-        if (currentSpeed < MaxSpeed)
+        if (trs.Speed < MaxSpeed)
         {
-            currentSpeed += Acceleration * Time.fixedDeltaTime;
+            trs.Speed += Acceleration * Time.fixedDeltaTime;
         }
 
         if (Acceleration < 0)
         {
-            currentSpeed = Mathf.Max(0f, currentSpeed + Acceleration * Time.fixedDeltaTime);
+            trs.Speed = Mathf.Max(0f, trs.Speed + Acceleration * Time.fixedDeltaTime);
         }
     }
 
     private void StopRouting()
     {
-        // trs.enabled = false;
-        isMoving = false;
+        trs.enabled = false;
+
     }
 
     private void StartRouting()
     {
-        // trs.enabled = true;
-        isMoving = true;
-        currentSpeed = 0f;
+        trs.enabled = true;
+        trs.Speed = 0;
     }   
 
     #region яма
@@ -228,10 +189,7 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("ResoreFromPit");
 
-        // trs.Distance += addDistance;
-
-        curveDistance += addDistance;
-        transform.position = math.CalcPositionByDistance(curveDistance);
+        trs.Distance += addDistance;
 
         body.velocity = Vector3.zero;
         body.isKinematic = true;
@@ -278,10 +236,7 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("ResoreAfterCollideWithBall");
 
-        // trs.Distance += addDistance;
-        
-        curveDistance += addDistance;
-        transform.position = math.CalcPositionByDistance(curveDistance);
+        trs.Distance += addDistance;
 
         body.velocity = Vector3.zero;
         body.isKinematic = true;
@@ -306,7 +261,7 @@ public class PlayerController : MonoBehaviour
             //collider.size *= 0.2f;
             var rb = item.gameObject.AddComponent<Rigidbody>();
 
-            rb.AddForce((UnityEngine.Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
+            rb.AddForce((Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
             //rb.AddExplosionForce(10, ballPosition, 100);
 
         }
