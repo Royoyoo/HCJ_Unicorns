@@ -113,7 +113,7 @@ public class PlayerController : MonoBehaviour
             StartRouting();
         }
 
-        //CheckRamp();
+        CheckRamp();
 
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
@@ -122,13 +122,15 @@ public class PlayerController : MonoBehaviour
 
     private void CheckRamp()
     {
-        if (OnRamp == false && Model.transform.position.y > 0)
+        if (OnRamp == false && Model.transform.position.y > 0.1f)
         {
-            print("CheckRamp");
-            Model.transform.position -= Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime;
-            if (Model.transform.position.y < 0f)
+          //  print("CheckRamp");
+            var downForce = Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime;
+            Model.transform.position -= downForce;
+            //print(downForce);
+            if (ModelPosition.y < 0f)
             {
-                Model.transform.position = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
+                ModelPosition = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
             }
         }
     }
