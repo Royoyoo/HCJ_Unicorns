@@ -10,9 +10,12 @@ public class TransformFollowWithOffset : MonoBehaviour
     public Vector3 posOffset;
     public Vector3 rotOffset;
 
-    void Update()
+    void LateUpdate()
     {
-        this.transform.position = Vector3.Lerp(this.transform.position, target.position + posOffset, smoothing * Time.deltaTime);
-        this.transform.rotation = Quaternion.Slerp(this.transform.rotation, target.rotation * Quaternion.Euler(rotOffset), smoothing * Time.deltaTime);
+        this.transform.position = target.position + posOffset;
+        this.transform.rotation = target.rotation * Quaternion.Euler(rotOffset);
+        
+        // this.transform.position = Vector3.Lerp(this.transform.position, target.position + posOffset, smoothing * Time.deltaTime);
+        // this.transform.rotation = Quaternion.Slerp(this.transform.rotation, target.rotation * Quaternion.Euler(rotOffset), smoothing * Time.deltaTime);
     }
 }

@@ -162,7 +162,7 @@ MonoBehaviour:
   smoothing: 5
   target: {fileID: 0}
   posOffset: {x: 0, y: 0, z: 0}
-  rotOffset: {x: 0, y: -90, z: 0}
+  rotOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &5568906694939312146
 GameObject:
   m_ObjectHideFlags: 0

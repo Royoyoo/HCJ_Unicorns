@@ -50,7 +50,8 @@ public class Collector : MonoBehaviour
         
         while (Time.time < startTime + duration)
         {
-            matTransform.position = Vector3.Lerp(startPos, matsUITarget.position, (Time.time - startTime) / duration);
+            if(matTransform != null)
+                matTransform.position = Vector3.Lerp(startPos, matsUITarget.position, (Time.time - startTime) / duration);
             yield return null;
         }
         

@@ -12,11 +12,13 @@ public enum MaterialType
 public class PickUpTrigger : MonoBehaviour
 {
     public MaterialType type;
+    private bool isPickedUp;
     
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player") && !isPickedUp)
         {
+            isPickedUp = true;
             other.GetComponent<Collector>().PickUp(this);
         }
     }
