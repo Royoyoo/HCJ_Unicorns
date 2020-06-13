@@ -4,6 +4,8 @@ public class Ramp : MonoBehaviour
 {  
     private BoxCollider collider;
     PlayerController player;
+
+    public Vector3 ColliderCenter => transform.TransformPoint(collider.center);
         
     void Awake()
     {
@@ -20,7 +22,7 @@ public class Ramp : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-          //  Debug.Log("OnTriggerStay with Player" + other);
+            
         }
     }
 
@@ -32,6 +34,9 @@ public class Ramp : MonoBehaviour
 
             player = other.gameObject.GetComponent<PlayerController>();
             player.OnRamp = true;
+
+            player.CanChangeRoute = false;
+            player.Ramp = this;
         }
     }
 
@@ -40,9 +45,12 @@ public class Ramp : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             //  Debug.Log("OnTriggerExit with Player" + other);
+
             player.OnRamp = false;
+            player.CanChangeRoute = true;
+
+            player.Ramp = null;
             player = null;
-           
         }
     }    
 }

@@ -28,7 +28,7 @@ public class UpDownTrigger : MonoBehaviour
         if (player != null)
         {
             // Debug.Log("OnTriggerStay with Player" + other);               
-            player.rampType = Type;
+            player.rampType = Type;            
         }
     }
 

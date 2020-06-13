@@ -57,13 +57,17 @@ public class PlayerController : MonoBehaviour
     private float startRotationY;
     private float startRotationZ;
 
+    public Ramp Ramp;
     public bool OnRamp;
     public UpDownType rampType;   
+    public bool CanChangeRoute;
 
     public float CurrentSpeed => trs.Speed;
     private Quaternion ModelLocalRotation => Model.transform.localRotation;
     private Vector3 ModelLocalPosition { get => Model.transform.localPosition; set => Model.transform.localPosition = value; }
-   
+
+    float threshold = 0.1f;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -81,21 +85,30 @@ public class PlayerController : MonoBehaviour
         startRotationZ = ModelLocalRotation.eulerAngles.z;
 
         rampType = UpDownType.None;
+        CanChangeRoute = true;
     }
 
     private void FixedUpdate()
     {
         Accelerate();
              
-        var inputMove = Input.GetAxis("Horizontal");
+        var inputMove = Input.GetAxis("Horizontal"); 
         var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
        
         var currentZ = Model.transform.localPosition.z;
         var newPositionZ = currentZ + moveZ;
         newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
-        Model.transform.localPosition = new Vector3(0f, Model.transform.localPosition.y, newPositionZ);
+        var newPosition = new Vector3(0f, Model.transform.localPosition.y, newPositionZ);
+
+        var oldPosition = Model.transform.localPosition;
+        if (CanApplyNewPosition(newPosition, oldPosition))
+        {
+            Model.transform.localPosition = newPosition;           
+        }
+
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
-        
+
+
         ApplyRotation(inputMove);
 
         // test
@@ -115,9 +128,41 @@ public class PlayerController : MonoBehaviour
         // UpdateBreakParts();
     }
 
+    private bool CanApplyNewPosition(Vector3 newPosition, Vector3 oldPosition)
+    {       
+        if (!CanChangeRoute && Ramp != null)
+        {
+            // еще проверка высоты, когда уже на рампе
+            if (ModelLocalPosition.y < threshold)
+            {
+                var colliderCenter = new Vector3(Ramp.ColliderCenter.x, 0, Ramp.ColliderCenter.z);
+
+                var currentDistance = Vector3.Distance(transform.TransformPoint(ModelLocalPosition), colliderCenter);
+                var newDistance = Vector3.Distance(transform.TransformPoint(newPosition), colliderCenter);
+
+                //Debug.DrawLine(transform.TransformPoint(ModelLocalPosition), colliderCenter, Color.blue, 3f);
+                //Debug.DrawLine(transform.TransformPoint(newPosition), colliderCenter, Color.red, 3f);           
+
+                // Отдаляемся?
+                var movingAway = newDistance > currentDistance;
+                // print(currentDistance + "  :  " + newDistance +  " : "  +movingAway);
+                if (movingAway)
+                    return true;
+
+                return false;
+            }
+            else
+            {
+                // проверяем, что свалились с рампы
+            }
+             
+        }
+        return true;
+    }
+
     private void CheckRamp()
     {
-        if (OnRamp == false && Model.transform.position.y > 0.1f)
+        if (OnRamp == false && Model.transform.position.y > threshold)
         {
           //  print("CheckRamp");
             var downForce = Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime;
@@ -384,9 +429,7 @@ public class PlayerController : MonoBehaviour
     {
         var currentX = Model.transform.localPosition.x;
 
-        var desiredX = DefineRouteX(desiredRoute);// (int)desiredRoute * Data.Config.RouteDistance;
-
-        var threshold = 0.1f;
+        var desiredX = DefineRouteX(desiredRoute);// (int)desiredRoute * Data.Config.RouteDistance;       
 
         var moveX = 0f;
 
