@@ -1202,7 +1202,12 @@ MonoBehaviour:
   matsParent: {fileID: 7637451962377085935}
   matPrefab: {fileID: 5395519991191639571, guid: 9815f35bd9708d54c8cd062348f59266,
     type: 3}
+  cameraAnim: {fileID: 0}
+  playerController: {fileID: 7177892121011514271}
+  gameplayUI: {fileID: 0}
+  matsUITarget: {fileID: 0}
   House: {fileID: 0}
+  startAcceleration: 0
   flyCurve:
     serializedVersion: 2
     m_Curve:

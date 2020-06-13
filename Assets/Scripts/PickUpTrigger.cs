@@ -17,10 +17,7 @@ public class PickUpTrigger : MonoBehaviour
     {
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            other.GetComponent<Collector>().PickUp(this.type);
-            
-            //???
-            Destroy(this.gameObject);
+            other.GetComponent<Collector>().PickUp(this);
         }
     }
 }
