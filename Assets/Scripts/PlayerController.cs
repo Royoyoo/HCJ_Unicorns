@@ -58,22 +58,12 @@ public class PlayerController : MonoBehaviour
     private float startRotationZ;
 
     public bool OnRamp;
-    public UpDownType rampType;
+    public UpDownType rampType;   
 
     public float CurrentSpeed => trs.Speed;
     private Quaternion ModelLocalRotation => Model.transform.localRotation;
-    private Vector3 ModelLocalPosition
-    {
-        get
-        {
-            return Model.transform.localPosition;
-        }
-        set
-        {
-            Model.transform.localPosition = value;
-        }
-    }
-
+    private Vector3 ModelLocalPosition { get => Model.transform.localPosition; set => Model.transform.localPosition = value; }
+   
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -89,6 +79,8 @@ public class PlayerController : MonoBehaviour
         startRotationX = ModelLocalRotation.eulerAngles.x;
         startRotationY = ModelLocalRotation.eulerAngles.y;
         startRotationZ = ModelLocalRotation.eulerAngles.z;
+
+        rampType = UpDownType.None;
     }
 
     private void FixedUpdate()
@@ -137,7 +129,7 @@ public class PlayerController : MonoBehaviour
             }
         }
         
-        if(OnRamp == true && rampType != UpDownType.None)
+        if(rampType != UpDownType.None)
         {
             var direction = rampType == UpDownType.Up ? Vector3.up : Vector3.down;
             var value = direction * CurrentSpeed * Time.deltaTime;
@@ -169,8 +161,8 @@ public class PlayerController : MonoBehaviour
 
         var rotationX = startRotationX;
         var currentRotationX = ModelLocalRotation.eulerAngles.x;
-        if (OnRamp && rampType != UpDownType.None)
-        {
+        if (rampType != UpDownType.None)
+        {           
             desireRotateX = rampType == UpDownType.Up ? 45 : -45;
         }
         if (currentRotationX != desireRotateX)
