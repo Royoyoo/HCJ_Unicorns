@@ -190,7 +190,7 @@ public class PlayerController : MonoBehaviour
         fallIntoPit = false;
 
         // todo
-        var addDistance = 3f;
+        var addDistance = 4f;
 
         Debug.Log("ResoreFromPit");
 

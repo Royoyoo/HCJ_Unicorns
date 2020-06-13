@@ -2,7 +2,7 @@
 using BansheeGz.BGSpline.Curve;
 using UnityEngine;
 
-public class BallChain : MonoBehaviour
+public class Rocking : MonoBehaviour
 {
     [SerializeField]
     private BGCurve Route;
