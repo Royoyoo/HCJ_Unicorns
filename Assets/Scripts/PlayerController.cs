@@ -2,12 +2,14 @@
 using BansheeGz.BGSpline.Curve;
 using System.Collections;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 public enum LineRoute
 {
-    Left = -1,
-    Center = 0,
-    Right = 1,
+    _1 = 1,
+    _2 = 2,
+    _3 = 3,
+    _4 = 4
 }
 
 [RequireComponent(typeof(Rigidbody))]
@@ -28,6 +30,8 @@ public class PlayerController : MonoBehaviour
 
     public Rocking leftLeg;
     public Rocking rightLeg;
+
+    public LineRoute startRoute = LineRoute._1;
 
     LineRoute desiredRoute;
     Rigidbody body;
@@ -53,7 +57,7 @@ public class PlayerController : MonoBehaviour
         trs.Speed = 0;
         
         Model.transform.localPosition = Vector3.zero;
-        desiredRoute = LineRoute.Center;
+        desiredRoute = startRoute;       
     }
 
    
@@ -61,21 +65,21 @@ public class PlayerController : MonoBehaviour
     {
         Accelerate();
 
-        // направо - внутрь круга
+        // направо 
         if (Input.GetKeyDown(KeyCode.D))
         {
             desiredRoute = desiredRoute + 1;
-            if (desiredRoute > LineRoute.Right)
-                desiredRoute = LineRoute.Right;
+            if (desiredRoute > LineRoute._4)
+                desiredRoute = LineRoute._4;
         }
 
-        // налево - наружу круга
+        // налево 
         if (Input.GetKeyDown(KeyCode.A))
         {
             desiredRoute = desiredRoute - 1;
 
-            if (desiredRoute < LineRoute.Left)
-                desiredRoute = LineRoute.Left;
+            if (desiredRoute < LineRoute._1)
+                desiredRoute = LineRoute._1;
         }
 
         // test
@@ -93,30 +97,7 @@ public class PlayerController : MonoBehaviour
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
-    }
-
-    bool addedColliders;
-    private void UpdateBreakParts()
-    {
-        if (collideWithBall)
-        {
-            timeAfterBreak += Time.deltaTime;
-            if (timeAfterBreak > 0.1f && brokenParts != null && !addedColliders)
-            {
-                foreach (var item in brokenParts)
-                {
-                    item.gameObject.AddComponent<BoxCollider>();
-                }
-                print("addedColliders = " + addedColliders);
-                addedColliders = true;
-            }
-        }
-        else
-        {
-            timeAfterBreak = 0;
-            addedColliders = false;
-        }
-    }
+    }   
 
     private void Accelerate()
     {
@@ -143,9 +124,9 @@ public class PlayerController : MonoBehaviour
         var currentX = Model.transform.localPosition.x;
 
 
-        var desiredX = (int)desiredRoute * Data.Config.RouteDistance;
+        var desiredX = DefineRouteX(desiredRoute);// (int)desiredRoute * Data.Config.RouteDistance;
 
-        var threshold = 0.1f * Data.Config.RouteDistance;
+        var threshold = 0.1f;
 
         var moveX = 0f;
 
@@ -154,16 +135,22 @@ public class PlayerController : MonoBehaviour
         if (currentX > desiredX)
             moveX = -ChangeRouteSpeed * Time.deltaTime;
 
-        var newPositionX = Mathf.Clamp(Model.transform.localPosition.x + moveX, -Data.Config.RouteDistance, Data.Config.RouteDistance);
-        // округляем около центрального маршрута
+        var newPositionX = ClampRouteX(desiredRoute, threshold, Model.transform.localPosition.x + moveX);
 
-        if (desiredRoute == 0 && newPositionX > -threshold && newPositionX < threshold)
+        //Model.transform.localPosition = new Vector3(newPositionX, Model.transform.localPosition.y, Model.transform.localPosition.z);
+        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
+        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
+    }
+
+    private float ClampRouteX(LineRoute desiredRoute, float threshold, float newPositionX)
+    {
+        var desiredX = DefineRouteX(desiredRoute);
+        if (newPositionX > desiredX - threshold && newPositionX < desiredX + threshold)
         {
-            newPositionX = 0f;
+            newPositionX = DefineRouteX(desiredRoute);
         }
 
-        Model.transform.localPosition = new Vector3(newPositionX, Model.transform.localPosition.y, Model.transform.localPosition.z);
-        boxCollider.center = colliderStartPosition + Model.transform.localPosition;
+        return newPositionX;
     }
 
     #region яма
@@ -293,5 +280,24 @@ public class PlayerController : MonoBehaviour
         action.Invoke();
     }
 
+    public static float DefineRouteX(LineRoute route)
+    {
+        switch (route)
+        {
+            case LineRoute._1:
+                return -2.25f;  
+                
+            case LineRoute._2:
+                return -0.75f;
 
+            case LineRoute._3:
+                return 0.75f;
+
+            case LineRoute._4:
+                return 2.25f;
+
+            default:
+                return 0;               
+        }
+    }
 }

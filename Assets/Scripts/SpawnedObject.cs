@@ -7,8 +7,8 @@ public class SpawnedObject : MonoBehaviour
 
     public void SetRandomRoute()
     {
-        var randomRoute = Random.Range(-1, 2);
+        var randomRoute = Random.Range((int)LineRoute._1, (int)LineRoute._4 + 1 );
         //Debug.Log(randomRoute);
-        Model.transform.localPosition += Vector3.right * randomRoute * Data.Config.RouteDistance;
+        Model.transform.localPosition += Vector3.right * randomRoute * PlayerController.DefineRouteX((LineRoute)randomRoute);
     }
 }
