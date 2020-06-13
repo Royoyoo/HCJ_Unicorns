@@ -6,8 +6,6 @@ using TMPro;
 
 public class FinishTrigger : MonoBehaviour
 {
-    public MaterialType type;
-
     public Animation cameraAnim;
     
     void OnTriggerEnter(Collider other)

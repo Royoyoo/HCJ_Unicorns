@@ -61,18 +61,18 @@ public class PlayerController : MonoBehaviour
     }
 
    
-    private void Update()
+    private void FixedUpdate()
     {
         Accelerate();
         
-        var moveX = 0f;
+        var moveZ = 0f;
         var inputMove = Input.GetAxis("Horizontal");                        
-        moveX = inputMove * ChangeRouteSpeed * Time.deltaTime;
+        moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;
 
-        var currentX = Model.transform.localPosition.x;
-        var newPositionX = currentX + moveX;        
-        newPositionX = Mathf.Clamp(newPositionX, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));        
-        Model.transform.localPosition = new Vector3(newPositionX, 0, 0);
+        var currentZ = Model.transform.localPosition.z;
+        var newPositionZ = currentZ + moveZ;        
+        newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));        
+        Model.transform.localPosition = new Vector3(0f, 0f, newPositionZ);
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
 
         // test
@@ -94,7 +94,7 @@ public class PlayerController : MonoBehaviour
     {
         if (trs.Speed < MaxSpeed)
         {
-            trs.Speed += Acceleration * Time.deltaTime;
+            trs.Speed += Acceleration * Time.fixedDeltaTime;
         }
     }
 
