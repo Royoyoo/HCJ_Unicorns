@@ -22,7 +22,7 @@ public class Collector : MonoBehaviour
     public void PickUp(MaterialType matType)
     {
         var randomOffset = new Vector3(Random.Range(-0.15f, 0.15f),Random.Range(0f, 0.2f),Random.Range(-0.3f, 0.3f));
-        Debug.Log(randomOffset);
+        // Debug.Log(randomOffset);
         var matGO = Instantiate(matPrefab, randomOffset + matsParent.transform.position, Quaternion.identity, matsParent);
         
         materials.Add(new PickedUpBlock{matType = matType, matGO = matGO});
