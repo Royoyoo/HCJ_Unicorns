@@ -53,10 +53,12 @@ public class PlayerController : MonoBehaviour
     private float timeAfterBreak = 0;
     Transform[] brokenParts;
 
+    private float startRotationX;
     private float startRotationY;
     private float startRotationZ;
 
     public bool OnRamp;
+    public UpDownType rampType;
 
     public float CurrentSpeed => trs.Speed;
     private Quaternion ModelLocalRotation => Model.transform.localRotation;
@@ -84,10 +86,9 @@ public class PlayerController : MonoBehaviour
         Model.transform.localPosition = Vector3.zero;
         desiredRoute = startRoute;
 
-        startRotationY = Model.transform.localRotation.eulerAngles.y;
-        startRotationZ = Model.transform.localRotation.eulerAngles.z;
-
-
+        startRotationX = ModelLocalRotation.eulerAngles.x;
+        startRotationY = ModelLocalRotation.eulerAngles.y;
+        startRotationZ = ModelLocalRotation.eulerAngles.z;
     }
 
     private void FixedUpdate()
@@ -135,12 +136,21 @@ public class PlayerController : MonoBehaviour
                 ModelLocalPosition = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
             }
         }
+        
+        if(OnRamp == true && rampType != UpDownType.None)
+        {
+            var direction = rampType == UpDownType.Up ? Vector3.up : Vector3.down;
+            var value = direction * CurrentSpeed * Time.deltaTime;
+            ModelLocalPosition += value;
+        }        
     }
+
 
     private void ApplyRotation(float inputMove)
     {
         var koefRotaitonZ = 0.5f;
 
+        var desireRotateX = startRotationX;
         var desireRotateY = startRotationY + inputMove * MaxRotate;
         var desireRotateZ = startRotationZ + inputMove * MaxRotate * koefRotaitonZ;
 
@@ -157,7 +167,18 @@ public class PlayerController : MonoBehaviour
             rotationZ = Mathf.MoveTowardsAngle(ModelLocalRotation.eulerAngles.z, desireRotateZ, RotateSpeed * koefRotaitonZ);
         }
 
-        Model.transform.localRotation = Quaternion.Euler(ModelLocalRotation.eulerAngles.x, rotationY, rotationZ);
+        var rotationX = startRotationX;
+        var currentRotationX = ModelLocalRotation.eulerAngles.x;
+        if (OnRamp && rampType != UpDownType.None)
+        {
+            desireRotateX = rampType == UpDownType.Up ? 45 : -45;
+        }
+        if (currentRotationX != desireRotateX)
+        {
+            rotationX = Mathf.MoveTowardsAngle(currentRotationX, desireRotateX, RotateSpeed);
+        }
+
+        Model.transform.localRotation = Quaternion.Euler(rotationX, rotationY, rotationZ);
     }
 
     private void Accelerate()
@@ -307,12 +328,7 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         action.Invoke();
-    }
-
-    public void Ramp(Vector3 value)
-    {
-        ModelLocalPosition += value;
-    }
+    }  
 
     public static float DefineRouteX(LineRoute route)
     {
