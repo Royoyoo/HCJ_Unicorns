@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
     [Range(0.01f, 10f)]
     public float Acceleration = 5;
 
+  
     [Range(5f, 60f)]
     public int MaxRotate = 30;
     [Range(0.01f, 10f)]
@@ -59,7 +60,17 @@ public class PlayerController : MonoBehaviour
 
     public float CurrentSpeed => trs.Speed;
     private Quaternion ModelRotation => Model.transform.localRotation;
-    private Vector3 ModelPosition => Model.transform.localPosition;
+    private Vector3 ModelPosition
+    {
+        get
+        {
+            return Model.transform.localPosition;
+        }
+        set
+        {
+            Model.transform.localPosition = value;
+        }
+    }
 
     private void Awake()
     {
@@ -87,7 +98,7 @@ public class PlayerController : MonoBehaviour
         var currentZ = Model.transform.localPosition.z;
         var newPositionZ = currentZ + moveZ;
         newPositionZ = Mathf.Clamp(newPositionZ, DefineRouteX(LineRoute._1), DefineRouteX(LineRoute._4));
-        Model.transform.localPosition = new Vector3(0f, 0f, newPositionZ);
+        Model.transform.localPosition = new Vector3(0f, Model.transform.localPosition.y, newPositionZ);
         boxCollider.center = colliderStartPosition + Model.transform.localPosition;
         
         ApplyRotation(inputMove);
@@ -102,9 +113,24 @@ public class PlayerController : MonoBehaviour
             StartRouting();
         }
 
+        //CheckRamp();
+
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
+    }
+
+    private void CheckRamp()
+    {
+        if (OnRamp == false && Model.transform.position.y > 0)
+        {
+            print("CheckRamp");
+            Model.transform.position -= Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime;
+            if (Model.transform.position.y < 0f)
+            {
+                Model.transform.position = new Vector3(Model.transform.localPosition.x, 0, Model.transform.localPosition.z);
+            }
+        }
     }
 
     private void ApplyRotation(float inputMove)
@@ -232,7 +258,7 @@ public class PlayerController : MonoBehaviour
         collideWithBall = false;
 
         // todo
-        var addDistance = 3f;
+        var addDistance = 5f;
 
         Debug.Log("ResoreAfterCollideWithBall");
 
@@ -244,10 +270,7 @@ public class PlayerController : MonoBehaviour
 
         StartRouting();
         // StartCoroutine(WaitTimeout(1f, () => StartRouting())); 
-
     }
-
-
   
     private void Break(Vector3 ballPosition)
     {
@@ -271,7 +294,7 @@ public class PlayerController : MonoBehaviour
 
     #endregion шар на цепи
 
-    public IEnumerator WaitTimeout(float timeout, System.Action action)
+    public IEnumerator WaitTimeout(float timeout, Action action)
     {
         var startTime = Time.time;
 
@@ -280,6 +303,11 @@ public class PlayerController : MonoBehaviour
             yield return null;
         }
         action.Invoke();
+    }
+
+    public void Ramp(Vector3 value)
+    {
+        ModelPosition += value;
     }
 
     public static float DefineRouteX(LineRoute route)

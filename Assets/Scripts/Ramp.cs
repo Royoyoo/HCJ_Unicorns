@@ -39,15 +39,17 @@ public class Ramp : MonoBehaviour
     {
         if (player == null)
             return;
-                
+               
         var playerPoint = new Vector2(player.transform.position.x, player.transform.position.z);
         if (upRect.Contains(playerPoint))
         {
+           // print(upRect);
             player.Model.transform.localPosition += Vector3.up * player.CurrentSpeed * Time.deltaTime;          
         }
 
         if (downRect.Contains(playerPoint))
         {
+           // print(downRect);
             player.Model.transform.localPosition += Vector3.down * player.CurrentSpeed * Time.deltaTime;
         }
     }
