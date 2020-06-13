@@ -26,6 +26,9 @@ public class PlayerController : MonoBehaviour
     [Range(0.01f, 10f)]
     public float Acceleration = 5;
 
+    public Rocking leftLeg;
+    public Rocking rightLeg;
+
     LineRoute desiredRoute;
     Rigidbody body;
 
@@ -38,6 +41,8 @@ public class PlayerController : MonoBehaviour
     private float timeAfterBreak = 0;
     Transform[] brokenParts;
 
+    private float CurrentSpeed => trs.Speed;
+      
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -46,8 +51,7 @@ public class PlayerController : MonoBehaviour
 
         trs = Route.GetComponent<BGCcTrs>();
         trs.Speed = 0;
-
-
+        
         Model.transform.localPosition = Vector3.zero;
         desiredRoute = LineRoute.Center;
     }
@@ -86,7 +90,9 @@ public class PlayerController : MonoBehaviour
 
         Move(desiredRoute);
 
-       // UpdateBreakParts();
+        leftLeg.speed = CurrentSpeed;
+        rightLeg.speed = CurrentSpeed;
+        // UpdateBreakParts();
     }
 
     bool addedColliders;

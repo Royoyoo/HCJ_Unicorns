@@ -30,9 +30,10 @@ public class BallChain : MonoBehaviour
         startRotateY = transform.rotation.eulerAngles.y;
     }  
 
+    // todo: можно использовать Rocking
     private void Update()
     {
-        transform.rotation = Quaternion.Euler(new Vector3(Mathf.Sin(Time.time * speed) * amplitude, startRotateY, 0));
+        transform.localRotation = Quaternion.Euler(new Vector3(Mathf.Cos(Time.time * speed) * amplitude, startRotateY, 0));
         lineRender.SetPosition(1, Ball.transform.position);
     }
 
