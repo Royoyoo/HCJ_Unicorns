@@ -62,7 +62,7 @@ public class PlayerController : MonoBehaviour
     private float startRotationY;
     private float startRotationZ;
 
-    private float CurrentSpeed => currentSpeed;
+    public float CurrentSpeed => currentSpeed;
     private Quaternion ModelRotation => Model.transform.localRotation;
     private Vector3 ModelPosition => Model.transform.localPosition;
 
