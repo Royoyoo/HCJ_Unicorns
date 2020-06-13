@@ -1,6 +1,7 @@
 ﻿using System;
 using BansheeGz.BGSpline.Components;
 using BansheeGz.BGSpline.Curve;
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
     private Quaternion ModelRotation => Model.transform.localRotation;
     private Vector3 ModelPosition => Model.transform.localPosition;
 
+    public bool OnRamp = false;
     private bool isMoving;
     float curveDistance = 0f;
     
@@ -85,7 +87,7 @@ public class PlayerController : MonoBehaviour
         startRotationY = Model.transform.localRotation.eulerAngles.y;
         startRotationZ = Model.transform.localRotation.eulerAngles.z;
     }
-
+   
     private void FixedUpdate()
     {
         if (!isMoving)
@@ -114,19 +116,33 @@ public class PlayerController : MonoBehaviour
 
         ApplyRotation(inputMove);
 
+        CheckRamp();
+
         // test
-        if (Input.GetKeyDown(KeyCode.R))
+      /*  if (Input.GetKeyDown(KeyCode.R))
         {
             StopRouting();
         }
         if (Input.GetKeyDown(KeyCode.T))
         {
             StartRouting();
-        }
+        }*/
 
         leftLeg.speed = CurrentSpeed;
         rightLeg.speed = CurrentSpeed;
         // UpdateBreakParts();
+    }
+
+    private void CheckRamp()
+    {
+        if(OnRamp == false && Model.transform.position.y > 0)
+        {
+            Model.transform.position -= Vector3.down * Physics.gravity.y * 0.5f * Time.deltaTime; 
+            if(Model.transform.position.y < 0f)
+            {                
+                Model.transform.position = new Vector3(0f, 0, Model.transform.localPosition.z);
+            }
+        }
     }
 
     private void ApplyRotation(float inputMove)
@@ -290,7 +306,7 @@ public class PlayerController : MonoBehaviour
             //collider.size *= 0.2f;
             var rb = item.gameObject.AddComponent<Rigidbody>();
 
-            rb.AddForce((Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
+            rb.AddForce((UnityEngine.Random.insideUnitSphere + Vector3.up) * 5, ForceMode.Impulse);
             //rb.AddExplosionForce(10, ballPosition, 100);
 
         }

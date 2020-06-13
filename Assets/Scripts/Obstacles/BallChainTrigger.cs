@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using UnityEngine.Events;
+﻿using UnityEngine;
 
 public class BallChainTrigger : MonoBehaviour
 {
