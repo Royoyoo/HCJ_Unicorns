@@ -7850,10 +7850,6 @@ PrefabInstance:
       propertyPath: House
       value: 
       objectReference: {fileID: 1958933641}
-    - target: {fileID: 286030190, guid: f433abd58e3b2b841b26f5348b793fdb, type: 3}
-      propertyPath: matSize
-      value: 0.15
-      objectReference: {fileID: 0}
     - target: {fileID: 1097211173524094381, guid: f433abd58e3b2b841b26f5348b793fdb,
         type: 3}
       propertyPath: m_IsActive
