@@ -18,7 +18,10 @@ public class Collector : MonoBehaviour
 
     public Transform matsParent;
     public GameObject matPrefab;
-    
+
+    [Range(0.01f, 10f)]
+    public float matSize = 1f;
+
     public Animation cameraAnim;
     public PlayerController playerController;
     public GameplayUI gameplayUI;
@@ -30,6 +33,7 @@ public class Collector : MonoBehaviour
         startAcceleration = playerController.Acceleration;
     }
 
+    float currentMatPos = 0;
     public void PickUp(PickUpTrigger pickedTrigger)
     {
         StartCoroutine(MoveMatToUI(pickedTrigger.transform));
@@ -37,11 +41,13 @@ public class Collector : MonoBehaviour
         AudioManager.PlaySound(SoundType.GetMaterial);
         
         var matType = pickedTrigger.type;
-        var randomOffset = new Vector3(Random.Range(-0.15f, 0.15f),Random.Range(0f, 0.2f),Random.Range(-0.3f, 0.3f));
+        var randomOffset = new Vector3(Random.Range(-0.15f, 0.15f), 0 ,Random.Range(-0.3f, 0.3f));
+        var randomRotation = Quaternion.Euler(0, Random.Range(0,90), 0);
         // Debug.Log(randomOffset);
-        var matGO = Instantiate(matPrefab, randomOffset + matsParent.transform.position, Quaternion.identity, matsParent);
+        var matGO = Instantiate(matPrefab, matsParent.transform.position + Vector3.up * currentMatPos, randomRotation, matsParent);
         
         materials.Add(new PickedUpBlock{matType = matType, matGO = matGO});
+        currentMatPos += matSize;
     }
 
     IEnumerator MoveMatToUI(Transform matTransform)
