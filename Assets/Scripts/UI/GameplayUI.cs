@@ -12,7 +12,7 @@ public class GameplayUI : MonoBehaviour
     
     private void Update()
     {
-        matCounter.text = Data.Player.matCount.ToString();
+        matCounter.text = $"Mats: {Data.Player.matCount}";
     }
 
     public void PlaySizeUpAnim()

@@ -34,6 +34,8 @@ public class Collector : MonoBehaviour
     {
         StartCoroutine(MoveMatToUI(pickedTrigger.transform));
         
+        AudioManager.PlaySound(SoundType.GetMaterial);
+        
         var matType = pickedTrigger.type;
         var randomOffset = new Vector3(Random.Range(-0.15f, 0.15f),Random.Range(0f, 0.2f),Random.Range(-0.3f, 0.3f));
         // Debug.Log(randomOffset);
@@ -113,7 +115,7 @@ public class Collector : MonoBehaviour
         }
 
         Data.Player.matsInBuilding++;
-        House.ShowNextBlock();
+        House.CheckForNextBlock();
         Destroy(blockGO);
     }
 }

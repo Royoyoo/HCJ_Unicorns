@@ -11,6 +11,7 @@ public class FinishTrigger : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             other.GetComponent<Collector>().BuildWithMats();
+            AudioManager.PlaySound(SoundType.Finish);
         }
     }
 }
