@@ -19,7 +19,7 @@ public enum LineRoute
 public class PlayerController : MonoBehaviour
 {
     public BGCurve Route;
-    BGCcTrs trs;
+    public BGCcTrs trs;
 
     public GameObject Model;
     public Transform WorkerPoint;
@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
     public bool OnRamp;
     public UpDownType rampType;   
     public bool CanChangeRoute;
-
+  
     public float CurrentSpeed => trs.Speed;
     private Quaternion ModelLocalRotation => Model.transform.localRotation;
     private Vector3 ModelLocalPosition { get => Model.transform.localPosition; set => Model.transform.localPosition = value; }
@@ -103,7 +103,10 @@ public class PlayerController : MonoBehaviour
 
         CurrectMaxSpeed = MaxSpeed;
 
-        StopRouting();
+        // todo uncomment
+        // StopRouting();
+        // todo del
+        canMove = true;
     }
 
     public void StartMove()
@@ -154,7 +157,7 @@ public class PlayerController : MonoBehaviour
         //}
         //if (Input.GetKeyDown(KeyCode.T))
         //{
-        //    StartRouting();
+        //    StartRouting();            
         //}
 
         CheckRamp();
