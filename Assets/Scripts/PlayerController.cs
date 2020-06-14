@@ -129,15 +129,15 @@ public class PlayerController : MonoBehaviour
 
         ApplyRotation(inputMove);
 
-        // test
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            StopRouting();
-        }
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            StartRouting();
-        }
+        //// test
+        //if (Input.GetKeyDown(KeyCode.R))
+        //{
+        //    StopRouting();
+        //}
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    StartRouting();
+        //}
 
         CheckRamp();
 
