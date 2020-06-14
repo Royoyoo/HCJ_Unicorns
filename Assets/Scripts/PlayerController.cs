@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     public float ChangeRouteSpeed = 5;
     [Range(0.01f, 100f)]
     public float MaxSpeed = 10;
+    [Range(0.01f, 100f)]
+    public float MinSpeed = 0.5f;
     [Range(0.01f, 10f)]
     public float Acceleration = 5;
 
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour
     public int MaxRotate = 30;
     [Range(0.01f, 10f)]
     public float RotateSpeed = 2;
+
 
     public Rocking leftLeg;
     public Rocking rightLeg;
@@ -76,7 +79,7 @@ public class PlayerController : MonoBehaviour
         colliderStartPosition = boxCollider.center;
 
         trs = Route.GetComponent<BGCcTrs>();
-        trs.Speed = 0;
+        trs.Speed = MinSpeed;
         
         //Model.transform.localPosition = Vector3.zero;
         desiredRoute = startRoute;
@@ -255,12 +258,14 @@ public class PlayerController : MonoBehaviour
     {
         if (trs.Speed < MaxSpeed)
         {
-            trs.Speed += Acceleration * Time.fixedDeltaTime;
+            var newSpeed = trs.Speed + Acceleration * Time.fixedDeltaTime;
+            newSpeed = Mathf.Clamp(newSpeed, MinSpeed, MaxSpeed);
+            trs.Speed = newSpeed;           
         }
 
         if (Acceleration < 0)
         {
-            trs.Speed = Mathf.Max(0f, trs.Speed + Acceleration * Time.fixedDeltaTime);
+            trs.Speed = Mathf.Max(MinSpeed, trs.Speed + Acceleration * Time.fixedDeltaTime);
         }
     }
 
@@ -273,7 +278,7 @@ public class PlayerController : MonoBehaviour
     private void StartRouting()
     {
         trs.enabled = true;
-        trs.Speed = 0;
+        trs.Speed = MinSpeed;      
     }   
 
     #region яма
@@ -293,12 +298,12 @@ public class PlayerController : MonoBehaviour
         body.isKinematic = false;
         body.useGravity = true;
         var randomForce = new Vector3(Random.value, Random.value, Random.value) * 10;
-        body.AddForce(randomForce, ForceMode.Force);
+        body.AddForce(Vector3.down, ForceMode.Force);
         var randomTorque = new Vector3(Random.value, Random.value, Random.value) * 10;
         body.AddTorque(randomTorque, ForceMode.Force);
         //  StartCoroutine(FallIntoPitCor()); 
 
-        StartCoroutine(WaitTimeout(1f, () => ResoreFromPit()));
+        StartCoroutine(WaitTimeout(1.5f, () => ResoreFromPit()));
     }
 
     public void ResoreFromPit()
@@ -306,7 +311,7 @@ public class PlayerController : MonoBehaviour
         fallIntoPit = false;
 
         // todo
-        var addDistance = 5f;
+        var addDistance = 4f;
 
         Debug.Log("ResoreFromPit");
 
