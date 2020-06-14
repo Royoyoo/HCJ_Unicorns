@@ -320,7 +320,7 @@ public class PlayerController : MonoBehaviour
         if (fallIntoPit == true)
             return;
 
-        Debug.Log("FallIntoPit");
+       // Debug.Log("FallIntoPit");
 
         AudioManager.PlaySound(SoundType.Fail);
         
@@ -348,7 +348,7 @@ public class PlayerController : MonoBehaviour
         // todo
         var addDistance = 4f;
 
-        Debug.Log("ResoreFromPit");
+       //Debug.Log("ResoreFromPit");
 
         trs.Distance += addDistance;
 
@@ -371,7 +371,7 @@ public class PlayerController : MonoBehaviour
         if (collideWithBall == true)
             return;
 
-        Debug.Log("CollideWithBall");
+       // Debug.Log("CollideWithBall");
 
         AudioManager.PlaySound(SoundType.Fail);
         
@@ -399,7 +399,7 @@ public class PlayerController : MonoBehaviour
         // todo
         var addDistance = 5f;
 
-        Debug.Log("ResoreAfterCollideWithBall");
+       // Debug.Log("ResoreAfterCollideWithBall");
 
         trs.Distance += addDistance;
 
@@ -443,7 +443,7 @@ public class PlayerController : MonoBehaviour
     private void RestoreMaxSpeed(float value)
     {        
         CurrectMaxSpeed /= value;
-        print(value + "  " +CurrectMaxSpeed);
+        //print(value + "  " +CurrectMaxSpeed);
     }
 
     public void WaitTimeout(float timeout, Action action)
@@ -459,7 +459,7 @@ public class PlayerController : MonoBehaviour
         {
             yield return null;
         }
-        print(action);
+        //print(action);
         action.Invoke();
     }  
 

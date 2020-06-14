@@ -7,7 +7,7 @@ public class BallChainTrigger : MonoBehaviour
 
     public void OnTriggerEnter(Collider other)
     {
-        Debug.Log("OnTriggerEnter " + other);
+        //Debug.Log("OnTriggerEnter " + other);
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
             var player = other.gameObject.GetComponent<PlayerController>();
@@ -22,7 +22,7 @@ public class BallChainTrigger : MonoBehaviour
         
         if (collision.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            Debug.Log("OnCollisionEnter " + collision);
+           // Debug.Log("OnCollisionEnter " + collision);
             var player = collision.gameObject.GetComponent<PlayerController>();
             var forceDirection = player.transform.position - this.transform.position;
             player.CollideWithBall(forceDirection, transform.position);

@@ -139,7 +139,7 @@ public class Collector : MonoBehaviour
         var removeCount =(int) (materials.Count * removePercent);
         removeCount = Mathf.Clamp(removeCount, 0, materials.Count);
         
-        Debug.Log("RemoveMat before = " + materials.Count);
+        //Debug.Log("RemoveMat before = " + materials.Count);
 
         for (int i = 0; i < removeCount; i++)
         {
@@ -148,6 +148,6 @@ public class Collector : MonoBehaviour
             materials.RemoveAt(lastIndex);
         }       
 
-        Debug.Log("RemoveMat after = " + materials.Count);
+        //Debug.Log("RemoveMat after = " + materials.Count);
     }
 }

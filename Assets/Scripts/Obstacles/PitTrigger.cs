@@ -1,18 +1,14 @@
 ﻿using UnityEngine;
-using UnityEngine.Events;
 
 public class PitTrigger : MonoBehaviour
-{
-    public UnityEvent CollideWithPlayer;
-
+{   
     public void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("OnTriggerEnter" + other);
-        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        var player = other.gameObject.GetComponent<PlayerController>();
+        if (player != null)
         {
-            //Debug.Log("OnTriggerEnter with Player" + other);
-            CollideWithPlayer?.Invoke();
+            // Debug.Log("OnTriggerStay with Player" + other);               
+            player.FallIntoPit();
         }
     }
-
 }
