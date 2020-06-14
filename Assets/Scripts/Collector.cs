@@ -41,6 +41,8 @@ public class Collector : MonoBehaviour
     {
         StartCoroutine(MoveMatToUI(pickedTrigger.transform));
         
+        AudioManager.PlaySound(SoundType.GetMaterial);
+        
         var matType = pickedTrigger.type;
         var randomOffset = new Vector3(Random.Range(-0.15f, 0.15f), 0 ,Random.Range(-0.3f, 0.3f));
         var randomRotation = Quaternion.Euler(0, Random.Range(0,90), 0);
@@ -122,7 +124,7 @@ public class Collector : MonoBehaviour
         }
 
         Data.Player.matsInBuilding++;
-        House.ShowNextBlock();
+        House.CheckForNextBlock();
         Destroy(blockGO);
     }
 

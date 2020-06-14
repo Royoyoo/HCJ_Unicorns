@@ -5,26 +5,38 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
+[Serializable]
+public class Block
+{
+    public float matsRate;
+    public GameObject go;
+}
+
 public class House : MonoBehaviour
 {
-    public List<GameObject> blocksGO = new List<GameObject>();
+    public List<Block> blocks = new List<Block>();
 
     public void Start()
     {
-        foreach (var blockGO in blocksGO)
+        foreach (var block in blocks)
         {
-            blockGO.SetActive(false);
+            block.go.SetActive(false);
         }
     }
 
-    public void ShowNextBlock()
+    public void CheckForNextBlock()
     {
-        foreach (var block in blocksGO)
+        var completionRate = (float) Data.Player.matsInBuilding / Data.Config.buildingMatsRequired;
+        
+        foreach (var block in blocks)
         {
-            if (!block.activeSelf)
+            if (!block.go.activeSelf && completionRate > block.matsRate)
             {
-                block.SetActive(true);
-                block.GetComponent<Animation>().Play();
+                block.go.SetActive(true);
+                block.go.GetComponent<Animation>().Play();
+
+                AudioManager.PlaySound(completionRate < 1 ? SoundType.HouseStageCompleted : SoundType.HouseCompleted);
+
                 break;
             }
         }

@@ -77,6 +77,8 @@ public class PlayerController : MonoBehaviour
 
     float threshold = 0.1f;
 
+    public bool canMove;
+    
     private void Awake()
     {
         body = GetComponent<Rigidbody>();
@@ -100,10 +102,21 @@ public class PlayerController : MonoBehaviour
         Ramp = null;
 
         CurrectMaxSpeed = MaxSpeed;
+
+        StopRouting();
     }
 
+    public void StartMove()
+    {
+        canMove = true;
+        StartRouting();
+    }
+    
     private void FixedUpdate()
     {
+        if (!canMove)
+            return;
+        
         Accelerate();
              
         var inputMove = Input.GetAxis("Horizontal");
@@ -288,7 +301,6 @@ public class PlayerController : MonoBehaviour
     private void StopRouting()
     {
         trs.enabled = false;
-
     }
 
     private void StartRouting()
@@ -307,6 +319,8 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("FallIntoPit");
 
+        AudioManager.PlaySound(SoundType.Fail);
+        
         fallIntoPit = true;
 
         StopRouting();
@@ -356,6 +370,8 @@ public class PlayerController : MonoBehaviour
 
         Debug.Log("CollideWithBall");
 
+        AudioManager.PlaySound(SoundType.Fail);
+        
         collideWithBall = true;
 
         StopRouting();
