@@ -102,11 +102,8 @@ public class PlayerController : MonoBehaviour
         Ramp = null;
 
         CurrectMaxSpeed = MaxSpeed;
-
-        // todo uncomment
-        // StopRouting();
-        // todo del
-        canMove = true;
+              
+         StopRouting();      
     }
 
     public void StartMove()
