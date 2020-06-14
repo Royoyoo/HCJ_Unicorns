@@ -28,6 +28,8 @@ public class PlayerController : MonoBehaviour
     public float ChangeRouteSpeed = 5;
     [Range(0.01f, 100f)]
     public float MaxSpeed = 10;
+    public float CurrectMaxSpeed;
+
     [Range(0.01f, 100f)]
     public float MinSpeed = 0.5f;
     [Range(0.01f, 10f)]
@@ -91,6 +93,8 @@ public class PlayerController : MonoBehaviour
         rampType = UpDownType.None;
         CanChangeRoute = true;
         Ramp = null;
+
+        CurrectMaxSpeed = MaxSpeed;
     }
 
     private void FixedUpdate()
@@ -256,12 +260,19 @@ public class PlayerController : MonoBehaviour
 
     private void Accelerate()
     {
-        if (trs.Speed < MaxSpeed)
+        var newSpeed = CurrentSpeed;
+        if (newSpeed < CurrectMaxSpeed)
         {
-            var newSpeed = trs.Speed + Acceleration * Time.fixedDeltaTime;
-            newSpeed = Mathf.Clamp(newSpeed, MinSpeed, MaxSpeed);
-            trs.Speed = newSpeed;           
+             newSpeed += Acceleration * Time.fixedDeltaTime;                    
         }
+        if (CurrentSpeed > CurrectMaxSpeed)
+        {
+            newSpeed -= Acceleration * Time.fixedDeltaTime;           
+        }
+        newSpeed = Mathf.Clamp(newSpeed, MinSpeed, CurrectMaxSpeed);
+        trs.Speed = newSpeed;
+
+        //Debug.Log(CurrentSpeed);
 
         if (Acceleration < 0)
         {
@@ -303,7 +314,7 @@ public class PlayerController : MonoBehaviour
         body.AddTorque(randomTorque, ForceMode.Force);
         //  StartCoroutine(FallIntoPitCor()); 
 
-        StartCoroutine(WaitTimeout(1.5f, () => ResoreFromPit()));
+        WaitTimeout(1.5f, () => ResoreFromPit());
     }
 
     public void ResoreFromPit()
@@ -348,7 +359,7 @@ public class PlayerController : MonoBehaviour
         //body.useGravity = false;
         // body.AddForce(forceDirection * 1f, ForceMode.Impulse);
 
-        StartCoroutine(WaitTimeout(2f, () => ResoreAfterCollideWithBall()));
+        WaitTimeout(2f, () => ResoreAfterCollideWithBall());
     }
 
 
@@ -390,11 +401,29 @@ public class PlayerController : MonoBehaviour
         }
         Destroy(brokenModel, 1f);
         Model.SetActive(false);
-    }   
+    }
 
     #endregion шар на цепи
 
-    public IEnumerator WaitTimeout(float timeout, Action action)
+    public void ChangeMaxSpeed(float value, float time)
+    {
+        CurrectMaxSpeed *= value;
+        WaitTimeout(time, () => RestoreMaxSpeed(value)) ;
+      
+    }
+
+    private void RestoreMaxSpeed(float value)
+    {        
+        CurrectMaxSpeed /= value;
+        print(value + "  " +CurrectMaxSpeed);
+    }
+
+    public void WaitTimeout(float timeout, Action action)
+    {
+        StartCoroutine(WaitTimeoutCor(timeout, action));       
+    }
+
+    public IEnumerator WaitTimeoutCor(float timeout, Action action)
     {
         var startTime = Time.time;
 
@@ -402,6 +431,7 @@ public class PlayerController : MonoBehaviour
         {
             yield return null;
         }
+        print(action);
         action.Invoke();
     }  
 
