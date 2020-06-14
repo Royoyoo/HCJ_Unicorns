@@ -100,11 +100,15 @@ public class Collector : MonoBehaviour
         cameraAnim.Play("Camera_LookAtHouse");
         yield return new WaitForSeconds(0.5f);
         
+        playerController.StopRouting();
+        
         foreach (var block in materials)
         {
             StartCoroutine(ThrowBlockCor(block.matGO));
-            yield return new WaitForSeconds(0.3f);
+            yield return new WaitForSeconds(0.15f);
         }
+        
+        playerController.StartRouting();
         
         ResumePlayerMove();
         cameraAnim.Play("Camera_LookAtPlayer");

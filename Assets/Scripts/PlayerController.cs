@@ -298,12 +298,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void StopRouting()
+    public void StopRouting()
     {
         trs.enabled = false;
     }
 
-    private void StartRouting()
+    public void StartRouting()
     {
         trs.enabled = true;
         trs.Speed = MinSpeed;      
