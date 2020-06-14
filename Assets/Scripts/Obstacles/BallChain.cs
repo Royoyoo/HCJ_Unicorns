@@ -3,14 +3,7 @@ using BansheeGz.BGSpline.Curve;
 using UnityEngine;
 
 public class BallChain : MonoBehaviour
-{
-    [SerializeField]
-    private BGCurve Route;
-    private BGCcMath math;
-    
-    [SerializeField, Range(0f, 1f)]
-    private float RouteDistancePositon;
-
+{      
     public GameObject Ball;
     
     public float speed = 5f; //скорость туда-сюда
@@ -24,8 +17,6 @@ public class BallChain : MonoBehaviour
     {
         lineRender = GetComponent<LineRenderer>();
         lineRender.SetPosition(0, transform.position);
-
-        math = Route.GetComponent<BGCcMath>();
 
         startRotateY = transform.rotation.eulerAngles.y;
     }  
