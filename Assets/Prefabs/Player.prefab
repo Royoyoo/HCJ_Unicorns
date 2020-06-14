@@ -1185,7 +1185,9 @@ MonoBehaviour:
   Model: {fileID: 1206142045319197751}
   WorkerPoint: {fileID: 4681592754637285847}
   ChangeRouteSpeed: 5
-  MaxSpeed: 5
+  MaxSpeed: 10
+  CurrectMaxSpeed: 0
+  MinSpeed: 0.5
   Acceleration: 5
   MaxRotate: 30
   RotateSpeed: 2
@@ -1240,6 +1242,8 @@ MonoBehaviour:
   matsParent: {fileID: 7637451962377085935}
   matPrefab: {fileID: 5395519991191639571, guid: 9815f35bd9708d54c8cd062348f59266,
     type: 3}
+  matSize: 0.2
+  removePercent: 0.1
   cameraAnim: {fileID: 0}
   playerController: {fileID: 7177892121011514271}
   gameplayUI: {fileID: 0}

@@ -22,6 +22,9 @@ public class Collector : MonoBehaviour
     [Range(0.01f, 10f)]
     public float matSize = 1f;
 
+    [Range(0.01f, 1f)]
+    public float removePercent = 0.1f;
+
     public Animation cameraAnim;
     public PlayerController playerController;
     public GameplayUI gameplayUI;
@@ -121,5 +124,23 @@ public class Collector : MonoBehaviour
         Data.Player.matsInBuilding++;
         House.ShowNextBlock();
         Destroy(blockGO);
+    }
+
+    public void RemoveMat()
+    {
+        var removeCount =(int) (materials.Count * removePercent);
+        removeCount = Mathf.Clamp(removeCount, 1, materials.Count);
+        
+
+        Debug.Log("RemoveMat before = " + materials.Count);
+
+        for (int i = 0; i < removeCount; i++)
+        {
+            var lastIndex = materials.Count - 1;          
+            Destroy(materials[lastIndex].matGO);
+            materials.RemoveAt(lastIndex);
+        }       
+
+        Debug.Log("RemoveMat after = " + materials.Count);
     }
 }

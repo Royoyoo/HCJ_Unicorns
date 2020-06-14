@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour
     public Rocking leftLeg;
     public Rocking rightLeg;
 
+
     public LineRoute startRoute = LineRoute._1;
 
     LineRoute desiredRoute;
@@ -52,6 +53,8 @@ public class PlayerController : MonoBehaviour
 
     BoxCollider boxCollider;
     Vector3 colliderStartPosition;
+
+    Collector collector;
 
     bool fallIntoPit = false;
     bool collideWithBall = false;
@@ -82,7 +85,9 @@ public class PlayerController : MonoBehaviour
 
         trs = Route.GetComponent<BGCcTrs>();
         trs.Speed = MinSpeed;
-        
+
+        collector = GetComponent<Collector>();
+
         //Model.transform.localPosition = Vector3.zero;
         desiredRoute = startRoute;
 
@@ -314,6 +319,8 @@ public class PlayerController : MonoBehaviour
         body.AddTorque(randomTorque, ForceMode.Force);
         //  StartCoroutine(FallIntoPitCor()); 
 
+        collector.RemoveMat();
+
         WaitTimeout(1.5f, () => ResoreFromPit());
     }
 
@@ -358,6 +365,8 @@ public class PlayerController : MonoBehaviour
         //body.isKinematic = false;
         //body.useGravity = false;
         // body.AddForce(forceDirection * 1f, ForceMode.Impulse);
+
+        collector.RemoveMat();
 
         WaitTimeout(2f, () => ResoreAfterCollideWithBall());
     }
