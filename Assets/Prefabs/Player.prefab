@@ -1182,6 +1182,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Route: {fileID: 0}
+  trs: {fileID: 0}
   Model: {fileID: 1206142045319197751}
   WorkerPoint: {fileID: 4681592754637285847}
   ChangeRouteSpeed: 5
@@ -1198,6 +1199,7 @@ MonoBehaviour:
   OnRamp: 0
   rampType: 0
   CanChangeRoute: 0
+  canMove: 0
 --- !u!65 &7177892121011514257
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1242,7 +1244,7 @@ MonoBehaviour:
   matsParent: {fileID: 7637451962377085935}
   matPrefab: {fileID: 5395519991191639571, guid: 9815f35bd9708d54c8cd062348f59266,
     type: 3}
-  matSize: 0.2
+  matSize: 0.15
   removePercent: 0.1
   cameraAnim: {fileID: 0}
   playerController: {fileID: 7177892121011514271}
