@@ -100,8 +100,8 @@ public class PlayerController : MonoBehaviour
         //print(force);
         if (!Mathf.Approximately(force, 0f))
         {
-            print(force);
-            inputMove = force * 0.5f;
+           // print(force);
+            inputMove = force * 0.3f;
         }
 
         var moveZ = inputMove * ChangeRouteSpeed * Time.fixedDeltaTime;      
@@ -144,9 +144,9 @@ public class PlayerController : MonoBehaviour
         if (!CanChangeRoute && Ramp != null)
         {
             // еще проверка высоты, когда уже на рампе
-            if (ModelLocalPosition.y < threshold)
+            if (ModelLocalPosition.y < 1)
             {
-                var colliderCenter = new Vector3(Ramp.ColliderCenter.x, 0, Ramp.ColliderCenter.z);
+                var colliderCenter = Ramp.ColliderCenter;
 
                 var currentDistance = Vector3.Distance(transform.TransformPoint(ModelLocalPosition), colliderCenter);
                 var newDistance = Vector3.Distance(transform.TransformPoint(newPosition), colliderCenter);
@@ -172,7 +172,7 @@ public class PlayerController : MonoBehaviour
         {          
             //var rect = new Rect(new Vector2(Ramp.ColliderCenter.x, , Ramp.ColliderSize);
             var contains = Ramp.collider.bounds.Contains(WorkerPoint.position);
-            print(contains);
+           // print(contains);
             if(!contains)
             {    
                 var rightPoint = WorkerPoint.position + Vector3.forward;
@@ -306,7 +306,7 @@ public class PlayerController : MonoBehaviour
         fallIntoPit = false;
 
         // todo
-        var addDistance = 4f;
+        var addDistance = 5f;
 
         Debug.Log("ResoreFromPit");
 
